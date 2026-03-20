@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Precios CREA Noreste</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #0e0f0c;
+    --bg2: #171810;
+    --bg3: #1f2018;
+    --card: #1a1b13;
+    --border: #2e2f22;
+    --accent: #c8e03a;
+    --accent2: #f0a500;
+    --accent3: #e05a2b;
+    --text: #e8e9dc;
+    --text2: #8a8b7a;
+    --text3: #5a5b4c;
+    --green: #4caf7d;
+    --red: #e05a5a;
+    --radius: 12px;
+    --font-head: 'Bebas Neue', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* Grid pattern background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo h1 {
+    font-family: var(--font-head);
+    font-size: 48px;
+    letter-spacing: 2px;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .logo p {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .header-stats { display: flex; gap: 24px; }
+  .hstat { text-align: right; }
+  .hstat-num { font-family: var(--font-mono); font-size: 22px; color: var(--accent); }
+  .hstat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Tab nav */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+    width: fit-content;
+  }
+  .tab {
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text2);
+    border: none;
+    background: transparent;
+    font-family: var(--font-body);
+    font-weight: 500;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+  .tab:hover { color: var(--text); background: var(--bg3); }
+  .tab.active { background: var(--accent); color: #0e0f0c; }
+
+  /* Panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Input panel */
+  .input-area {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .input-area label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+  textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 14px;
+    resize: vertical;
+    min-height: 140px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--text3); }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 14px; align-items: center; }
+  .btn {
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 13px;
+    border: none;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0e0f0c;
+  }
+  .btn-primary:hover { background: #d8f04a; transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { color: var(--text); border-color: var(--text3); }
+  .btn-danger {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--border);
+    margin-left: auto;
+  }
+  .btn-danger:hover { border-color: var(--red); background: rgba(224,90,90,0.08); }
+
+  .status-msg {
+    font-size: 12px;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    display: none;
+  }
+  .status-msg.visible { display: block; }
+  .status-msg.error { color: var(--red); }
+
+  /* Loading */
+  .loading-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    overflow: hidden;
+    margin-top: 12px;
+    display: none;
+  }
+  .loading-bar.visible { display: block; }
+  .loading-bar::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 40%;
+    background: var(--accent);
+    border-radius: 1px;
+    animation: slide 1s ease-in-out infinite alternate;
+  }
+  @keyframes slide { from { margin-left: -40%; } to { margin-left: 100%; } }
+
+  /* Table */
+  .table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .table-header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .table-title {
+    font-family: var(--font-head);
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  select, input[type="text"] {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 6px 10px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  select:focus, input[type="text"]:focus { border-color: var(--accent); }
+  select option { background: var(--bg2); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    cursor: pointer;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg3); }
+  tbody td {
+    padding: 11px 16px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .td-mono { font-family: var(--font-mono); }
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .badge-venta { background: rgba(200,224,58,0.15); color: var(--accent); }
+  .badge-compra { background: rgba(240,165,0,0.15); color: var(--accent2); }
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text3);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 13px; line-height: 1.6; }
+
+  /* Summary cards */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .scard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .scard::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+  .scard.orange::before { background: var(--accent2); }
+  .scard.red::before { background: var(--accent3); }
+  .scard.green::before { background: var(--green); }
+  .scard-val {
+    font-family: var(--font-mono);
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .scard-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; }
+
+  /* Charts panel */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px) { .charts-grid { grid-template-columns: 1fr; } }
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .chart-card.wide { grid-column: 1 / -1; }
+  .chart-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text3);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chart-label::before {
+    content: '';
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .chart-label.orange::before { background: var(--accent2); }
+  .chart-label.blue::before { background: #4a9fe0; }
+  .chart-placeholder {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--text3);
+    font-size: 12px;
+  }
+
+  /* Category panel */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .cat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+  }
+  .cat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .cat-name {
+    font-family: var(--font-head);
+    font-size: 24px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .cat-stats { display: flex; gap: 16px; flex-wrap: wrap; }
+  .cat-stat label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; display: block; }
+  .cat-stat span { font-family: var(--font-mono); font-size: 15px; color: var(--text); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--card);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--accent);
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    font-family: var(--font-mono);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  .active-period { background: var(--accent) !important; color: #0e0f0c !important; border-color: var(--accent) !important; }
+  input[type="month"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .logo h1 { font-size: 34px; }
+    .header-stats { display: none; }
+    .charts-grid { grid-template-columns: 1fr; }
+    .chart-card.wide { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">
+      <h1>PRECIOS<br>CREA NORESTE</h1>
+      <p>Información comercial del grupo</p>
+    </div>
+    <div class="header-stats">
+      <div class="hstat">
+        <div class="hstat-num" id="stat-total">0</div>
+        <div class="hstat-label">Operaciones</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num" id="stat-cats">0</div>
+        <div class="hstat-label">Categorías</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- PERIOD FILTER BAR -->
+  <div id="period-bar" style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;">
+    <span style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);white-space:nowrap">Período</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="btn btn-secondary period-btn" onclick="setPeriod(1)"  style="padding:5px 12px;font-size:12px">Último mes</button>
+      <button class="btn btn-secondary period-btn" onclick="setPeriod(3)"  style="padding:5px 12px;font-size:12px">3 meses</button>
+      <button class="btn btn-secondary period-btn" onclick="setPeriod(6)"  style="padding:5px 12px;font-size:12px">6 meses</button>
+      <button class="btn btn-secondary period-btn" onclick="setPeriod(12)" style="padding:5px 12px;font-size:12px">12 meses</button>
+      <button class="btn btn-secondary period-btn active-period" onclick="setPeriod(0)"  style="padding:5px 12px;font-size:12px">Todo</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-left:8px;flex-wrap:wrap;">
+      <span style="font-size:12px;color:var(--text2)">Desde</span>
+      <input type="month" id="period-from" onchange="applyPeriod()" style="font-size:12px;padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none;">
+      <span style="font-size:12px;color:var(--text2)">Hasta</span>
+      <input type="month" id="period-to" onchange="applyPeriod()" style="font-size:12px;padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none;">
+    </div>
+    <span id="period-count" style="font-size:12px;color:var(--text3);margin-left:auto;white-space:nowrap"></span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab" onclick="switchTab('ingresar')">Ingresar</button>
+    <button class="tab active" onclick="switchTab('animales')">🐄 Animales</button>
+    <button class="tab" onclick="switchTab('comparativo')">Comparativo</button>
+    <button class="tab" onclick="switchTab('tabla')">Tabla</button>
+    <button class="tab" onclick="switchTab('otros')">Otros productos</button>
+    <button class="tab" onclick="switchTab('consulta')">🔍 Consulta</button>
+  </div>
+
+  <!-- TAB: INGRESAR -->
+  <div id="panel-ingresar" class="panel">
+    <div class="input-area">
+      <label>Pegá el mensaje del grupo de WhatsApp</label>
+      <textarea id="msg-input" placeholder="Negocio: Venta
+Fecha: 17/03/2026
+Producto: Torillos
+Cantidad: 260 cabezas
+Peso Neto: +/- 285 kg probable a la entrega.
+Precio: 27 bs/kg
+Puesto en: San Judas
+Comprador: menono manitoba"></textarea>
+      <div class="loading-bar" id="loading-bar"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="processMessage()">⚡ Procesar</button>
+        <button class="btn btn-secondary" onclick="loadDemo()">Cargar ejemplo</button>
+        <span class="status-msg" id="status-msg"></span>
+        <button class="btn btn-danger" onclick="clearAll()">Borrar todo</button>
+      </div>
+    </div>
+
+    <div id="recent-entries"></div>
+  </div>
+
+  <!-- TAB: CONSULTA -->
+  <div id="panel-consulta" class="panel">
+    <div class="input-area">
+      <label>Buscar producto</label>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input type="text" id="search-input" placeholder="Ej: torillos, vaquillas, sorgo..." style="flex:1;min-width:180px" oninput="searchPrices()" onkeydown="if(event.key==='Escape')clearSearch()">
+        <button class="btn btn-secondary" onclick="clearSearch()" style="padding:8px 14px;font-size:12px">✕ Limpiar</button>
+      </div>
+    </div>
+    <div id="search-results" style="margin-top:16px"></div>
+  </div>
+
+  <!-- TAB: TABLA -->
+  <div id="panel-tabla" class="panel">
+    <div class="summary-grid" id="summary-grid"></div>
+    <div class="table-wrap">
+      <div class="table-header">
+        <span class="table-title">TODAS LAS OPERACIONES</span>
+        <div class="filter-row">
+          <select id="filter-tipo" onchange="renderTable()">
+            <option value="">Todos los negocios</option>
+            <option value="venta">Venta</option>
+            <option value="compra">Compra</option>
+          </select>
+          <select id="filter-cat" onchange="renderTable()">
+            <option value="">Todas las categorías</option>
+          </select>
+          <select id="filter-mes" onchange="renderTable()">
+            <option value="">Todos los meses</option>
+          </select>
+        </div>
+      </div>
+      <div id="table-container">
+        <div class="empty-state">
+          <div class="icon">🐄</div>
+          <p>Aún no hay datos.<br>Ingresá mensajes del grupo en la pestaña <strong>Ingresar</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: ANIMALES -->
+  <div id="panel-animales" class="panel active">
+    <div class="summary-grid" id="anim-summary-grid" style="margin-bottom:20px"></div>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+      <select id="anim-cat-filter" onchange="renderAnimales()" style="min-width:180px">
+        <option value="">Todas las categorías</option>
+      </select>
+      <div style="display:flex;gap:16px;font-size:12px;color:var(--text2);margin-left:8px">
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:24px;height:3px;background:#4caf7d;display:inline-block;border-radius:2px"></span>Venta</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:24px;height:3px;background:#f0a500;display:inline-block;border-radius:2px"></span>Compra</span>
+      </div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card wide">
+        <div class="chart-label">Evolución precio Bs/kg — Venta vs Compra por mes</div>
+        <div id="chart-anim-evol-wrap" style="position:relative;height:300px;"><div class="chart-placeholder">Sin datos.</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-label orange">Precio promedio por categoría (Venta vs Compra)</div>
+        <div id="chart-anim-cat-wrap" style="position:relative;height:300px;"><div class="chart-placeholder">Sin datos.</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-label blue">Cabezas por mes (Venta vs Compra)</div>
+        <div id="chart-anim-vol-wrap" style="position:relative;height:300px;"><div class="chart-placeholder">Sin datos.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: COMPARATIVO -->
+  <div id="panel-comparativo" class="panel">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+      <select id="comp-cat" onchange="renderComparativo()" style="min-width:160px">
+        <option value="">Todas las categorías</option>
+      </select>
+      <div style="font-size:12px;color:var(--text3);margin-left:auto">Verde = venta · Naranja = compra</div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card wide">
+        <div class="chart-label">Precio Bs/kg — Venta vs Compra por mes</div>
+        <div id="chart-comp-precio-wrap" style="position:relative;height:320px;"><div class="chart-placeholder">Sin datos.</div></div>
+      </div>
+      <div class="chart-card wide">
+        <div class="chart-label blue">Cabezas — Venta vs Compra por mes</div>
+        <div id="chart-comp-vol-wrap" style="position:relative;height:280px;"><div class="chart-placeholder">Sin datos.</div></div>
+      </div>
+    </div>
+    <div id="comp-table-wrap" style="margin-top:20px"></div>
+  </div>
+
+  <!-- TAB: OTROS -->
+  <div id="panel-otros" class="panel">
+    <div style="margin-bottom:18px;font-size:12px;color:var(--text3)">Insumos, granos y otros productos no ganaderos</div>
+    <div class="charts-grid">
+      <div class="chart-card wide">
+        <div class="chart-label orange">Precio unitario por producto</div>
+        <div id="chart-otros-wrap" style="position:relative;height:400px;"><div class="chart-placeholder">Sin datos.</div></div>
+      </div>
+    </div>
+    <div id="otros-table-wrap" style="margin-top:20px"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── State ───────────────────────────────────────────────
+let entries = [];
+let charts = {};
+let periodFrom = null; // "YYYY-MM" or null
+let periodTo = null;
+
+function filteredByPeriod() {
+  if (!periodFrom && !periodTo) return entries;
+  return entries.filter(e => {
+    if (!e.fecha) return true;
+    const p = e.fecha.split('/');
+    if (p.length < 3) return true;
+    const mk = `${p[2]}-${p[1].padStart(2,'0')}`;
+    if (periodFrom && mk < periodFrom) return false;
+    if (periodTo   && mk > periodTo)   return false;
+    return true;
+  });
+}
+
+function setPeriod(months) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active-period'));
+  event.target.classList.add('active-period');
+  if (months === 0) {
+    periodFrom = null; periodTo = null;
+    document.getElementById('period-from').value = '';
+    document.getElementById('period-to').value = '';
+  } else {
+    const now = new Date();
+    const to = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const from = new Date(now.getFullYear(), now.getMonth() - months + 1, 1);
+    const fromStr = `${from.getFullYear()}-${String(from.getMonth()+1).padStart(2,'0')}`;
+    periodFrom = fromStr; periodTo = to;
+    document.getElementById('period-from').value = fromStr;
+    document.getElementById('period-to').value = to;
+  }
+  updatePeriodCount();
+  refreshCurrentTab();
+}
+
+function applyPeriod() {
+  periodFrom = document.getElementById('period-from').value || null;
+  periodTo   = document.getElementById('period-to').value   || null;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active-period'));
+  updatePeriodCount();
+  refreshCurrentTab();
+}
+
+function updatePeriodCount() {
+  const n = filteredByPeriod().filter(e => {
+    const p = (e.producto||'').toLowerCase();
+    return ['torill','vaquill','vaca','toro','ternero','destete','novillo','hembra','macho'].some(a=>p.includes(a));
+  }).length;
+  const total = filteredByPeriod().length;
+  document.getElementById('period-count').textContent = `${total} operaciones · ${n} animales`;
+}
+
+function refreshCurrentTab() {
+  const active = document.querySelector('.tab.active');
+  if (!active) return;
+  const tabs = ['ingresar','animales','comparativo','tabla','otros','consulta'];
+  const names = document.querySelectorAll('.tab');
+  names.forEach((t,i) => { if(t===active) switchTab(tabs[i]); });
+}
+
+// ─── Tab switching ────────────────────────────────────────
+function switchTab(name) {
+  const names = ['ingresar','animales','comparativo','tabla','otros','consulta'];
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', names[i] === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if (name === 'animales') renderAnimales();
+  if (name === 'comparativo') renderComparativo();
+  if (name === 'tabla') renderTable();
+  if (name === 'otros') renderOtros();
+  if (name === 'consulta') document.getElementById('search-input').focus();
+}
+
+// ─── Animal categories ─────────────────────────────────────
+const ANIMAL_CATS = ['torillos','vaquillas','vacas','toros','terneros','novillos','destetes','hembras','machos','vaquillonas','vaquillona','toro','vaca','novillo','torito'];
+function isAnimal(e) {
+  if (!e.producto) return false;
+  const p = e.producto.toLowerCase();
+  return ANIMAL_CATS.some(a => p.includes(a)) || (e.categoria && ANIMAL_CATS.some(a => (e.categoria||'').toLowerCase().includes(a)));
+}
+function normCat(e) {
+  const p = (e.producto||'').toLowerCase();
+  if (p.includes('torill') || p.includes('torito')) return 'Torillos';
+  if (p.includes('vaquillon') || p.includes('vaquillona')) return 'Vaquillas';
+  if (p.includes('vaquill') || p.includes('vaquilla')) return 'Vaquillas';
+  if (p.includes('vaca') || p.includes('vacas') || p.includes('descarte')) return 'Vacas';
+  if (p.includes('toros') || p.includes('toro') || p.includes('reproductor')) return 'Toros';
+  if (p.includes('ternero') || p.includes('ternera') || p.includes('destete') || p.includes('hembra') || p.includes('macho')) return 'Terneros/Destetes';
+  if (p.includes('novillo')) return 'Novillos';
+  return e.categoria || e.producto;
+}
+
+function monthKey(fecha) {
+  if (!fecha) return null;
+  const p = fecha.split('/');
+  if (p.length >= 3) return `${p[1].padStart(2,'0')}/${p[2]}`;
+  return null;
+}
+function sortMonths(keys) {
+  return [...new Set(keys)].filter(Boolean).sort((a,b) => {
+    const [ma,ya] = a.split('/'); const [mb,yb] = b.split('/');
+    return (+ya*12 + +ma) - (+yb*12 + +mb);
+  });
+}
+
+const COLORS_PALETTE = ['#c8e03a','#f0a500','#4a9fe0','#e05a5a','#4caf7d','#c87ae0','#e08a3a','#3ae0c8','#e03a6e','#8ae03a'];
+const axisOpts = (textColor='#8a8b7a') => ({
+  grid: { color: 'rgba(255,255,255,0.06)' },
+  ticks: { color: textColor, font: { family: 'DM Mono', size: 11 } }
+});
+
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+// ─── ANIMALES tab ──────────────────────────────────────────
+function renderAnimales() {
+  const anim = filteredByPeriod().filter(isAnimal);
+  if (!anim.length) return;
+
+  // Populate category filter
+  const allCats = [...new Set(anim.map(normCat))].sort();
+  const selEl = document.getElementById('anim-cat-filter');
+  const prevCat = selEl ? selEl.value : '';
+  if (selEl) {
+    selEl.innerHTML = '<option value="">Todas las categorías</option>' + allCats.map(c=>`<option value="${c}" ${c===prevCat?'selected':''}>${c}</option>`).join('');
+    selEl.value = prevCat;
+  }
+  const filterCat = selEl ? selEl.value : '';
+  const filtered = filterCat ? anim.filter(e => normCat(e) === filterCat) : anim;
+
+  // Summary cards (always all animals)
+  const totalCab = anim.filter(e=>e.cantidad).reduce((s,e)=>s+(e.cantidad||0),0);
+  const ventaP = anim.filter(e=>e.negocio==='venta'&&e.precio_bs_kg).map(e=>e.precio_bs_kg);
+  const compraP = anim.filter(e=>e.negocio==='compra'&&e.precio_bs_kg).map(e=>e.precio_bs_kg);
+  const avg = arr => arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1) : '—';
+  document.getElementById('anim-summary-grid').innerHTML = `
+    <div class="scard"><div class="scard-val">${anim.length}</div><div class="scard-label">Operaciones animales</div></div>
+    <div class="scard orange"><div class="scard-val">${totalCab.toLocaleString()}</div><div class="scard-label">Total cabezas</div></div>
+    <div class="scard green"><div class="scard-val">${avg(ventaP)} Bs</div><div class="scard-label">Precio prom. venta</div></div>
+    <div class="scard red"><div class="scard-val">${avg(compraP)} Bs</div><div class="scard-label">Precio prom. compra</div></div>`;
+
+  // Chart 1: evolución precio — VENTA (verde) vs COMPRA (naranja) por mes
+  const months = sortMonths(filtered.map(e => monthKey(e.fecha)));
+  const byMonth = {};
+  filtered.forEach(e => {
+    if (!e.precio_bs_kg) return;
+    const mk = monthKey(e.fecha); if (!mk) return;
+    if (!byMonth[mk]) byMonth[mk] = { venta:[], compra:[] };
+    byMonth[mk][e.negocio==='compra'?'compra':'venta'].push(e.precio_bs_kg);
+  });
+  const avgArr = arr => arr && arr.length ? +(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(2) : null;
+
+  const evolWrap = document.getElementById('chart-anim-evol-wrap');
+  destroyChart('anim-evol');
+  evolWrap.innerHTML = '<canvas id="c-anim-evol"></canvas>';
+  charts['anim-evol'] = new Chart(document.getElementById('c-anim-evol'), {
+    type: 'line',
+    data: {
+      labels: months.map(k => mesLabel(k)),
+      datasets: [
+        {
+          label: 'Venta Bs/kg',
+          data: months.map(mk => avgArr(byMonth[mk]?.venta)),
+          borderColor: '#4caf7d', backgroundColor: 'rgba(76,175,125,0.08)',
+          pointBackgroundColor: '#4caf7d', pointRadius: 5,
+          tension: 0.3, fill: true, spanGaps: true
+        },
+        {
+          label: 'Compra Bs/kg',
+          data: months.map(mk => avgArr(byMonth[mk]?.compra)),
+          borderColor: '#f0a500', backgroundColor: 'rgba(240,165,0,0.08)',
+          pointBackgroundColor: '#f0a500', pointRadius: 5,
+          tension: 0.3, fill: true, spanGaps: true
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#8a8b7a', font: { family: 'DM Sans', size: 12 }, boxWidth: 14 } } },
+      scales: { x: axisOpts(), y: { ...axisOpts(), beginAtZero: false } }
+    }
+  });
+
+  // Chart 2: precio prom por categoría (barras horizontales, venta vs compra) — siempre todas las categorías
+  const catStats = {};
+  anim.forEach(e => {
+    const cat = normCat(e); if (!e.precio_bs_kg) return;
+    if (!catStats[cat]) catStats[cat] = { venta: [], compra: [] };
+    catStats[cat][e.negocio||'venta'].push(e.precio_bs_kg);
+  });
+  const catLabels = Object.keys(catStats);
+  const catWrap = document.getElementById('chart-anim-cat-wrap');
+  const catH = Math.max(300, catLabels.length * 50 + 80);
+  catWrap.style.height = catH + 'px';
+  destroyChart('anim-cat');
+  catWrap.innerHTML = '<canvas id="c-anim-cat"></canvas>';
+  charts['anim-cat'] = new Chart(document.getElementById('c-anim-cat'), {
+    type: 'bar', indexAxis: 'y',
+    data: {
+      labels: catLabels,
+      datasets: [
+        { label: 'Venta', data: catLabels.map(c => { const a=catStats[c].venta; return a.length?(a.reduce((x,y)=>x+y,0)/a.length).toFixed(2):null; }), backgroundColor: 'rgba(76,175,125,0.75)', borderColor: '#4caf7d', borderWidth:1, borderRadius:3 },
+        { label: 'Compra', data: catLabels.map(c => { const a=catStats[c].compra; return a.length?(a.reduce((x,y)=>x+y,0)/a.length).toFixed(2):null; }), backgroundColor: 'rgba(240,165,0,0.75)', borderColor: '#f0a500', borderWidth:1, borderRadius:3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color:'#8a8b7a', font:{ family:'DM Sans',size:11 }, boxWidth:12 } } },
+      scales: { x: axisOpts(), y: { grid:{display:false}, ticks:{color:'#8a8b7a',font:{family:'DM Sans',size:12}} } }
+    }
+  });
+
+  // Chart 3: volumen cabezas por mes — venta vs compra
+  const volByMonthV = {}, volByMonthC = {};
+  filtered.forEach(e => {
+    if (!e.cantidad||!e.fecha) return;
+    const mk = monthKey(e.fecha); if (!mk) return;
+    if (e.negocio === 'compra') volByMonthC[mk] = (volByMonthC[mk]||0) + e.cantidad;
+    else volByMonthV[mk] = (volByMonthV[mk]||0) + e.cantidad;
+  });
+  const volMonths = sortMonths([...Object.keys(volByMonthV), ...Object.keys(volByMonthC)]);
+  const volWrap = document.getElementById('chart-anim-vol-wrap');
+  destroyChart('anim-vol');
+  volWrap.innerHTML = '<canvas id="c-anim-vol"></canvas>';
+  charts['anim-vol'] = new Chart(document.getElementById('c-anim-vol'), {
+    type: 'bar',
+    data: {
+      labels: volMonths.map(k=>mesLabel(k)),
+      datasets: [
+        { label:'Cabezas vendidas', data: volMonths.map(k=>volByMonthV[k]||0), backgroundColor:'rgba(76,175,125,0.75)', borderColor:'#4caf7d', borderWidth:1, borderRadius:3 },
+        { label:'Cabezas compradas', data: volMonths.map(k=>volByMonthC[k]||0), backgroundColor:'rgba(240,165,0,0.75)', borderColor:'#f0a500', borderWidth:1, borderRadius:3 }
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins: { legend: { labels: { color:'#8a8b7a', font:{family:'DM Sans',size:12}, boxWidth:12 } } },
+      scales: { x:{...axisOpts(), ticks:{...axisOpts().ticks, autoSkip:false, maxRotation:45}}, y: axisOpts() } }
+  });
+}
+
+// ─── COMPARATIVO tab ───────────────────────────────────────
+function renderComparativo() {
+  const anim = filteredByPeriod().filter(isAnimal);
+
+  // Populate category filter
+  const cats = [...new Set(anim.map(normCat))].sort();
+  const sel = document.getElementById('comp-cat');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">Todas las categorías</option>' + cats.map(c=>`<option value="${c}" ${c===prev?'selected':''}>${c}</option>`).join('');
+  sel.value = prev;
+  const filterCat = sel.value;
+
+  const filtered = filterCat ? anim.filter(e => normCat(e) === filterCat) : anim;
+  const months = sortMonths(filtered.map(e => monthKey(e.fecha)));
+
+  // Build monthly venta/compra price and volume data
+  const byMonth = {};
+  filtered.forEach(e => {
+    const mk = monthKey(e.fecha); if (!mk) return;
+    if (!byMonth[mk]) byMonth[mk] = { ventaP:[], compraP:[], ventaCab:0, compraCab:0 };
+    if (e.precio_bs_kg) byMonth[mk][e.negocio==='compra'?'compraP':'ventaP'].push(e.precio_bs_kg);
+    if (e.cantidad) byMonth[mk][e.negocio==='compra'?'compraCab':'ventaCab'] += e.cantidad;
+  });
+
+  const avg = arr => arr.length ? +(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(2) : null;
+
+  // Chart: precio venta vs compra
+  const precioWrap = document.getElementById('chart-comp-precio-wrap');
+  destroyChart('comp-precio');
+  precioWrap.innerHTML = '<canvas id="c-comp-precio"></canvas>';
+  charts['comp-precio'] = new Chart(document.getElementById('c-comp-precio'), {
+    type: 'line',
+    data: {
+      labels: months.map(k=>mesLabel(k)),
+      datasets: [
+        { label:'Venta Bs/kg', data: months.map(mk=>avg(byMonth[mk]?.ventaP||[])), borderColor:'#4caf7d', backgroundColor:'rgba(76,175,125,0.1)', pointBackgroundColor:'#4caf7d', pointRadius:5, tension:0.3, fill:true, spanGaps:true },
+        { label:'Compra Bs/kg', data: months.map(mk=>avg(byMonth[mk]?.compraP||[])), borderColor:'#f0a500', backgroundColor:'rgba(240,165,0,0.1)', pointBackgroundColor:'#f0a500', pointRadius:5, tension:0.3, fill:true, spanGaps:true }
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{ labels:{color:'#8a8b7a',font:{family:'DM Sans',size:12},boxWidth:12} } },
+      scales: { x: axisOpts(), y: { ...axisOpts(), beginAtZero:false } }
+    }
+  });
+
+  // Chart: volumen cabezas venta vs compra
+  const volWrap = document.getElementById('chart-comp-vol-wrap');
+  destroyChart('comp-vol');
+  volWrap.innerHTML = '<canvas id="c-comp-vol"></canvas>';
+  charts['comp-vol'] = new Chart(document.getElementById('c-comp-vol'), {
+    type: 'bar',
+    data: {
+      labels: months.map(k=>mesLabel(k)),
+      datasets: [
+        { label:'Cabezas vendidas', data: months.map(mk=>byMonth[mk]?.ventaCab||0), backgroundColor:'rgba(76,175,125,0.7)', borderColor:'#4caf7d', borderWidth:1, borderRadius:3 },
+        { label:'Cabezas compradas', data: months.map(mk=>byMonth[mk]?.compraCab||0), backgroundColor:'rgba(240,165,0,0.7)', borderColor:'#f0a500', borderWidth:1, borderRadius:3 }
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{ labels:{color:'#8a8b7a',font:{family:'DM Sans',size:12},boxWidth:12} } },
+      scales: { x:{...axisOpts(), ticks:{...axisOpts().ticks,autoSkip:false,maxRotation:45}}, y: axisOpts() }
+    }
+  });
+
+  // Summary table by month
+  const tableRows = months.map(mk => {
+    const d = byMonth[mk] || {};
+    const pv = avg(d.ventaP||[]); const pc = avg(d.compraP||[]);
+    const diffAbs = (pv&&pc) ? (pv-pc).toFixed(2) : null;
+    const diffPct = (pv&&pc) ? (((pv-pc)/pc)*100).toFixed(1) : null;
+    const diffColor = diffPct !== null ? (+diffPct >= 0 ? 'var(--green)' : 'var(--red)') : 'var(--text2)';
+    const arrow = diffPct !== null ? (+diffPct >= 0 ? '▲' : '▼') : '';
+    return `<tr>
+      <td class="td-mono">${mesLabel(mk)}</td>
+      <td class="td-mono" style="color:var(--green)">${pv ? pv+' Bs' : '—'}</td>
+      <td class="td-mono" style="color:var(--accent2)">${pc ? pc+' Bs' : '—'}</td>
+      <td class="td-mono" style="color:${diffColor}">${diffAbs !== null ? diffAbs+' Bs' : '—'}</td>
+      <td class="td-mono" style="color:${diffColor};font-weight:500">${diffPct !== null ? arrow+' '+diffPct+'%' : '—'}</td>
+      <td class="td-mono">${(d.ventaCab||0).toLocaleString()}</td>
+      <td class="td-mono">${(d.compraCab||0).toLocaleString()}</td>
+    </tr>`;
+  }).join('');
+
+  // Category x month % difference matrix
+  let matrixHtml = '';
+  if (!filterCat) {
+    const allCats = [...new Set(anim.map(normCat))].sort();
+    const matData = {};
+    anim.forEach(e => {
+      if (!e.precio_bs_kg) return;
+      const mk = monthKey(e.fecha); if (!mk) return;
+      const cat = normCat(e);
+      if (!matData[cat]) matData[cat] = {};
+      if (!matData[cat][mk]) matData[cat][mk] = { venta:[], compra:[] };
+      matData[cat][mk][e.negocio==='compra'?'compra':'venta'].push(e.precio_bs_kg);
+    });
+    const allMonths = sortMonths(months);
+
+    const pctCell = (cat, mk) => {
+      const d = matData[cat]?.[mk];
+      if (!d) return `<td style="text-align:center;color:var(--text3);font-size:11px">—</td>`;
+      const pv = d.venta.length ? d.venta.reduce((a,b)=>a+b,0)/d.venta.length : null;
+      const pc = d.compra.length ? d.compra.reduce((a,b)=>a+b,0)/d.compra.length : null;
+      if (pv && pc) {
+        const pct = ((pv-pc)/pc*100).toFixed(1);
+        const color = +pct >= 0 ? '#4caf7d' : '#e05a5a';
+        const bg = +pct >= 0 ? 'rgba(76,175,125,0.15)' : 'rgba(224,90,90,0.15)';
+        const arr = +pct >= 0 ? '▲' : '▼';
+        return `<td style="text-align:center;background:${bg};color:${color};font-family:var(--font-mono);font-size:12px;font-weight:500;white-space:nowrap">${arr} ${pct}%</td>`;
+      }
+      if (pv) return `<td style="text-align:center;color:var(--green);font-family:var(--font-mono);font-size:11px;opacity:0.6" title="Solo venta">${pv.toFixed(1)} Bs</td>`;
+      if (pc) return `<td style="text-align:center;color:var(--accent2);font-family:var(--font-mono);font-size:11px;opacity:0.6" title="Solo compra">${pc.toFixed(1)} Bs</td>`;
+      return `<td style="text-align:center;color:var(--text3);font-size:11px">—</td>`;
+    };
+
+    matrixHtml = `
+    <div class="table-wrap" style="margin-top:20px;overflow-x:auto">
+      <div class="table-header" style="flex-wrap:wrap;gap:8px">
+        <span class="table-title">% DIFERENCIA VENTA vs COMPRA</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:auto">
+          <span style="color:#4caf7d">▲ verde</span> = venta mayor que compra &nbsp;|&nbsp;
+          <span style="color:#e05a5a">▼ rojo</span> = venta menor &nbsp;|&nbsp;
+          precio solo = sin contraparte ese mes
+        </span>
+      </div>
+      <table style="min-width:500px;width:100%">
+        <thead><tr>
+          <th style="white-space:nowrap;min-width:120px">Categoría</th>
+          ${allMonths.map(mk=>`<th style="text-align:center;white-space:nowrap;font-size:11px">${mesLabel(mk)}</th>`).join('')}
+        </tr></thead>
+        <tbody>
+          ${allCats.map(cat => `<tr>
+            <td style="white-space:nowrap"><strong>${cat}</strong></td>
+            ${allMonths.map(mk => pctCell(cat, mk)).join('')}
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }
+
+  document.getElementById('comp-table-wrap').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-header"><span class="table-title">RESUMEN MENSUAL</span></div>
+      <table><thead><tr>
+        <th>Mes</th><th>Precio venta</th><th>Precio compra</th><th>Diferencia Bs</th><th>% Diferencia</th><th>Cabezas vendidas</th><th>Cabezas compradas</th>
+      </tr></thead><tbody>${tableRows}</tbody></table>
+    </div>
+    ${matrixHtml}`;
+}
+
+// ─── OTROS tab ─────────────────────────────────────────────
+function renderOtros() {
+  const otros = filteredByPeriod().filter(e => !isAnimal(e));
+  if (!otros.length) { document.getElementById('otros-table-wrap').innerHTML = '<div class="empty-state"><div class="icon">📦</div><p>No hay registros de otros productos.</p></div>'; return; }
+
+  const byCat = {};
+  otros.forEach(e => {
+    const cat = e.producto || 'Desconocido';
+    if (!byCat[cat]) byCat[cat] = { count:0, total:0, precios:[], unidad: e.unidad||'', vendedor: e.vendedor||'' };
+    byCat[cat].count++;
+    if (e.precio_bs_kg) byCat[cat].precios.push(e.precio_bs_kg);
+  });
+
+  const catLabels = Object.keys(byCat).filter(c => byCat[c].precios.length).sort();
+  const catH = Math.max(400, catLabels.length * 28 + 100);
+  const wrap = document.getElementById('chart-otros-wrap');
+  wrap.style.height = catH + 'px';
+  destroyChart('otros');
+  wrap.innerHTML = '<canvas id="c-otros"></canvas>';
+  charts['otros'] = new Chart(document.getElementById('c-otros'), {
+    type:'bar', indexAxis:'y',
+    data: {
+      labels: catLabels.map(c => c.length > 35 ? c.slice(0,33)+'…' : c),
+      datasets: [{
+        label: 'Precio unitario',
+        data: catLabels.map(c => { const a=byCat[c].precios; return a.length?(a.reduce((x,y)=>x+y,0)/a.length).toFixed(2):null; }),
+        backgroundColor: 'rgba(240,165,0,0.7)', borderColor:'#f0a500', borderWidth:1, borderRadius:3
+      }]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales: { x: axisOpts(), y:{ grid:{display:false}, ticks:{color:'#8a8b7a', font:{family:'DM Sans',size:11}} } }
+    }
+  });
+
+  // Table
+  const rows = Object.entries(byCat).sort((a,b)=>b[1].count-a[1].count).map(([cat,d]) => {
+    const avg = d.precios.length ? (d.precios.reduce((a,b)=>a+b,0)/d.precios.length).toFixed(2) : '—';
+    return `<tr>
+      <td><strong>${cat}</strong></td>
+      <td class="td-mono">${d.count}</td>
+      <td class="td-mono" style="color:var(--accent2)">${avg !== '—' ? avg+' Bs' : '—'}</td>
+      <td style="color:var(--text2);font-size:12px">${d.unidad}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('otros-table-wrap').innerHTML = `
+    <div class="table-wrap" style="margin-top:20px">
+      <div class="table-header"><span class="table-title">DETALLE OTROS PRODUCTOS</span></div>
+      <table><thead><tr><th>Producto</th><th>Operaciones</th><th>Precio prom.</th><th>Unidad</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    </div>`;
+}
+
+// ─── TABLA ────────────────────────────────────────────────
+function renderTable() {
+  const base = filteredByPeriod();
+  const cats = [...new Set(base.map(e => e.producto).filter(Boolean))].sort();
+  const meses = [...new Set(base.map(e => {
+    if (!e.fecha) return null;
+    const p = e.fecha.split('/');
+    return p.length >= 3 ? `${p[1].padStart(2,'0')}/${p[2]}` : null;
+  }).filter(Boolean))].sort();
+
+  const fc = document.getElementById('filter-cat');
+  const fm = document.getElementById('filter-mes');
+  const selCat = fc.value, selMes = fm.value;
+  fc.innerHTML = '<option value="">Todas las categorías</option>' + cats.map(c => `<option value="${c}" ${c===selCat?'selected':''}>${c}</option>`).join('');
+  fm.innerHTML = '<option value="">Todos los meses</option>' + meses.map(m => `<option value="${m}" ${m===selMes?'selected':''}>${mesLabel(m)}</option>`).join('');
+  fc.value = selCat; fm.value = selMes;
+
+  const tipo = document.getElementById('filter-tipo').value;
+  let filtered = base.filter(e => {
+    if (tipo && e.negocio !== tipo) return false;
+    if (selCat && e.producto !== selCat) return false;
+    if (selMes && e.fecha) {
+      const p = e.fecha.split('/');
+      const m = p.length >= 3 ? `${p[1].padStart(2,'0')}/${p[2]}` : null;
+      if (m !== selMes) return false;
+    }
+    return true;
+  });
+
+  const totalCab = filtered.reduce((s,e) => s + (e.cantidad||0), 0);
+  const precios = filtered.filter(e => e.precio_bs_kg).map(e => e.precio_bs_kg);
+  const prom = precios.length ? (precios.reduce((a,b)=>a+b,0)/precios.length).toFixed(1) : '—';
+  const max = precios.length ? Math.max(...precios) : '—';
+  const min = precios.length ? Math.min(...precios) : '—';
+
+  document.getElementById('summary-grid').innerHTML = `
+    <div class="scard"><div class="scard-val">${filtered.length}</div><div class="scard-label">Operaciones</div></div>
+    <div class="scard orange"><div class="scard-val">${totalCab.toLocaleString()}</div><div class="scard-label">Total cabezas</div></div>
+    <div class="scard green"><div class="scard-val">${prom !== '—' ? prom+' Bs' : '—'}</div><div class="scard-label">Precio promedio</div></div>
+    <div class="scard red"><div class="scard-val">${max !== '—' ? max+' Bs' : '—'}</div><div class="scard-label">Precio máximo</div></div>
+    <div class="scard"><div class="scard-val">${min !== '—' ? min+' Bs' : '—'}</div><div class="scard-label">Precio mínimo</div></div>`;
+
+  const cont = document.getElementById('table-container');
+  if (!filtered.length) {
+    cont.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>No hay operaciones con los filtros seleccionados.</p></div>`;
+    return;
+  }
+  cont.innerHTML = `<table>
+    <thead><tr>
+      <th>Fecha</th><th>Tipo</th><th>Producto</th><th>Cabezas</th><th>Peso (kg)</th>
+      <th>Precio Bs/kg</th><th>Lugar</th><th>Comprador/Vendedor</th>
+    </tr></thead>
+    <tbody>
+      ${filtered.map(e => `<tr>
+        <td class="td-mono" style="white-space:nowrap">${e.fecha||'—'}</td>
+        <td><span class="badge badge-${e.negocio||'venta'}">${e.negocio||'—'}</span></td>
+        <td><strong>${e.producto||'—'}</strong></td>
+        <td class="td-mono">${e.cantidad??'—'}</td>
+        <td class="td-mono">${e.peso_kg??'—'}</td>
+        <td class="td-mono" style="color:var(--accent)">${e.precio_bs_kg ? e.precio_bs_kg+' Bs' : '—'}</td>
+        <td style="color:var(--text2)">${e.lugar||'—'}</td>
+        <td style="color:var(--text2);font-size:12px">${e.comprador||e.vendedor||'—'}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ─── Consulta rápida de precios ────────────────────────────
+function searchPrices() {
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  const container = document.getElementById('search-results');
+  if (!q || q.length < 2) { container.innerHTML = ''; return; }
+
+  // Match entries where producto contains the query
+  const matches = entries.filter(e => {
+    const p = (e.producto||'').toLowerCase();
+    return p.includes(q) || (e.categoria||'').toLowerCase().includes(q);
+  });
+
+  if (!matches.length) {
+    container.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:8px 0">No se encontraron operaciones para "<strong style="color:var(--text2)">${q}</strong>".</div>`;
+    return;
+  }
+
+  // Sort by date desc — parse DD/MM/YYYY
+  const parseDate = f => {
+    if (!f) return 0;
+    const p = f.split('/');
+    if (p.length < 3) return 0;
+    return parseInt(p[2]||0)*10000 + parseInt(p[1]||0)*100 + parseInt(p[0]||0);
+  };
+  const sorted = [...matches].sort((a,b) => parseDate(b.fecha) - parseDate(a.fecha));
+
+  // Group by normCat
+  const byCat = {};
+  sorted.forEach(e => {
+    const cat = normCat(e);
+    if (!byCat[cat]) byCat[cat] = [];
+    byCat[cat].push(e);
+  });
+
+  // Build output
+  let html = `<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">${matches.length} operacion${matches.length!==1?'es':''} encontrada${matches.length!==1?'s':''}</div>`;
+
+  Object.entries(byCat).forEach(([cat, items]) => {
+    const withPrice = items.filter(e => e.precio_bs_kg);
+    const ventas = withPrice.filter(e => e.negocio !== 'compra');
+    const compras = withPrice.filter(e => e.negocio === 'compra');
+    const avg = arr => arr.length ? (arr.reduce((s,e)=>s+e.precio_bs_kg,0)/arr.length).toFixed(1) : null;
+    const last = arr => arr.length ? arr[0] : null; // already sorted desc
+
+    const lastV = last(ventas); const lastC = last(compras);
+    const avgV = avg(ventas);   const avgC = avg(compras);
+
+    html += `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px">
+      <div style="font-family:var(--font-head);font-size:20px;letter-spacing:1px;color:var(--accent);margin-bottom:10px">${cat}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div style="background:rgba(76,175,125,0.08);border:1px solid rgba(76,175,125,0.2);border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#4caf7d;margin-bottom:4px">Última venta</div>
+          ${lastV ? `<div style="font-family:var(--font-mono);font-size:20px;color:var(--text);font-weight:500">${lastV.precio_bs_kg} <span style="font-size:13px;color:var(--text2)">Bs/kg</span></div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">${lastV.fecha||'—'} · ${lastV.lugar||'—'}</div>
+          ${avgV ? `<div style="font-size:11px;color:var(--text3);margin-top:4px">Prom. ${ventas.length} ventas: ${avgV} Bs</div>` : ''}` : `<div style="color:var(--text3);font-size:13px">Sin datos de venta</div>`}
+        </div>
+        <div style="background:rgba(240,165,0,0.08);border:1px solid rgba(240,165,0,0.2);border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin-bottom:4px">Última compra</div>
+          ${lastC ? `<div style="font-family:var(--font-mono);font-size:20px;color:var(--text);font-weight:500">${lastC.precio_bs_kg} <span style="font-size:13px;color:var(--text2)">Bs/kg</span></div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">${lastC.fecha||'—'} · ${lastC.lugar||'—'}</div>
+          ${avgC ? `<div style="font-size:11px;color:var(--text3);margin-top:4px">Prom. ${compras.length} compras: ${avgC} Bs</div>` : ''}` : `<div style="color:var(--text3);font-size:13px">Sin datos de compra</div>`}
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;font-size:12px">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:4px 8px 6px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px">Fecha</th>
+            <th style="text-align:left;padding:4px 8px 6px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px">Tipo</th>
+            <th style="text-align:right;padding:4px 8px 6px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px">Precio Bs/kg</th>
+            <th style="text-align:right;padding:4px 8px 6px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px">Cabezas</th>
+            <th style="text-align:left;padding:4px 8px 6px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px">Lugar</th>
+            <th style="text-align:left;padding:4px 8px 6px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px">Cpt/Vend.</th>
+          </tr></thead>
+          <tbody>
+            ${items.slice(0,10).map(e => `<tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:5px 8px;font-family:var(--font-mono);white-space:nowrap">${e.fecha||'—'}</td>
+              <td style="padding:5px 8px"><span class="badge badge-${e.negocio||'venta'}">${e.negocio||'—'}</span></td>
+              <td style="padding:5px 8px;text-align:right;font-family:var(--font-mono);color:var(--accent)">${e.precio_bs_kg ? e.precio_bs_kg+' Bs' : '—'}</td>
+              <td style="padding:5px 8px;text-align:right;font-family:var(--font-mono)">${e.cantidad??'—'}</td>
+              <td style="padding:5px 8px;color:var(--text2)">${e.lugar||'—'}</td>
+              <td style="padding:5px 8px;color:var(--text2)">${e.comprador||e.vendedor||'—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        ${items.length > 10 ? `<div style="font-size:11px;color:var(--text3);text-align:center;padding:6px 0">... y ${items.length-10} más</div>` : ''}
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+}
+
+// ─── Helpers ───────────────────────────────────────────────
+function mesLabel(m) {
+  const nombres = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const [mm, yy] = m.split('/');
+  const n = nombres[+mm] || mm;
+  return yy ? `${n} ${yy}` : n;
+}
+
+function showStatus(msg, isError) {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.className = 'status-msg visible' + (isError ? ' error' : '');
+  if (!isError) setTimeout(() => el.classList.remove('visible'), 3000);
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─── Init ──────────────────────────────────────────────────
+entries = [{"negocio":"compra","fecha":"06/03/2025","producto":"Diesel","cantidad":20000,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":8.0,"unidad":"litros","lugar":"Comprador/vendedor:","comprador":null,"vendedor":null,"notas":null,"remitente":"Pablo Diaz Saubidet","categoria":"Diesel","id":1,"ingresado":"06/03/2025"},{"negocio":"venta","fecha":"06/03/2025","producto":"Toros 4 y 5 años","cantidad":null,"peso_kg":638.0,"peso_neto":638.0,"peso_bruto":638.0,"precio_bs_kg":17.5,"unidad":"kg","lugar":"San Judas","comprador":null,"vendedor":null,"notas":null,"remitente":"Pablo Diaz Saubidet","categoria":"Toros","id":2,"ingresado":"06/03/2025"},{"negocio":"venta","fecha":"18/03/2025","producto":"Torillos 19 meses","cantidad":48,"peso_kg":428.0,"peso_neto":428.0,"peso_bruto":451.0,"precio_bs_kg":18.5,"unidad":"kg","lugar":"San Pedro","comprador":"Frigosi","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Torillos","id":3,"ingresado":"18/03/2025"},{"negocio":"venta","fecha":"19/03/2025","producto":"Torillos 1 a 2 anos","cantidad":120,"peso_kg":368.0,"peso_neto":368.0,"peso_bruto":368.0,"precio_bs_kg":18.3,"unidad":"kg","lugar":"Refugio","comprador":"confi Parabano","vendedor":null,"notas":null,"remitente":"Gonzalo Nogales","categoria":"Torillos","id":4,"ingresado":"19/03/2025"},{"negocio":"venta","fecha":"23/03/2025","producto":"Torillos 2 años","cantidad":80,"peso_kg":472.6,"peso_neto":472.6,"peso_bruto":497.5,"precio_bs_kg":19.0,"unidad":"kg","lugar":"Prop. San José","comprador":"Matadero BFC","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Torillos","id":5,"ingresado":"23/03/2025"},{"negocio":"venta","fecha":"27/03/2025","producto":"Torillos 2 años","cantidad":46,"peso_kg":422.75,"peso_neto":422.75,"peso_bruto":445.0,"precio_bs_kg":19.0,"unidad":"kg","lugar":"Los Tojos","comprador":"Matadero Fridosa","vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Torillos","id":6,"ingresado":"27/03/2025"},{"negocio":"venta","fecha":"03/04/2025","producto":"Vaquillas","cantidad":150,"peso_kg":361.0,"peso_neto":361.0,"peso_bruto":380.0,"precio_bs_kg":18.5,"unidad":"kg","lugar":"Prop. San José","comprador":"Matadero BFC","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Vaquillas","id":7,"ingresado":"03/04/2025"},{"negocio":"venta","fecha":"04/04/2025","producto":"Vacas","cantidad":59,"peso_kg":422.0,"peso_neto":422.0,"peso_bruto":444.0,"precio_bs_kg":17.0,"unidad":null,"lugar":"San Andrés","comprador":"Inducarne","vendedor":null,"notas":null,"remitente":"Jose Pepe Knize","categoria":"Vacas","id":8,"ingresado":"04/04/2025"},{"negocio":"venta","fecha":"04/04/2025","producto":"Vaquillas","cantidad":129,"peso_kg":383.0,"peso_neto":383.0,"peso_bruto":403.0,"precio_bs_kg":18.7,"unidad":null,"lugar":"Santa Maria","comprador":"Frigor","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Vaquillas","id":9,"ingresado":"04/04/2025"},{"negocio":"venta","fecha":"07/04/2025","producto":"Torillos","cantidad":100,"peso_kg":456.0,"peso_neto":456.0,"peso_bruto":480.0,"precio_bs_kg":20.0,"unidad":null,"lugar":"Abejas","comprador":"Fridosa","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":10,"ingresado":"07/04/2025"},{"negocio":"venta","fecha":"08/04/2025","producto":"Torillos","cantidad":260,"peso_kg":366.0,"peso_neto":366.0,"peso_bruto":385.0,"precio_bs_kg":19.0,"unidad":null,"lugar":"La Flauta","comprador":"BFC","vendedor":null,"notas":null,"remitente":"Diego Bocangel","categoria":"Torillos","id":11,"ingresado":"08/04/2025"},{"negocio":"venta","fecha":"08/04/2025","producto":"Torillos","cantidad":500,"peso_kg":378.0,"peso_neto":378.0,"peso_bruto":398.0,"precio_bs_kg":18.5,"unidad":null,"lugar":"AZUCARO","comprador":"Fridosa","vendedor":null,"notas":null,"remitente":"Diego Bocangel","categoria":"Torillos","id":12,"ingresado":"08/04/2025"},{"negocio":"venta","fecha":"08/04/2025","producto":"Torillos","cantidad":36,"peso_kg":412.25,"peso_neto":412.25,"peso_bruto":425.0,"precio_bs_kg":20.5,"unidad":null,"lugar":"Abejas","comprador":"Paisano","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":13,"ingresado":"08/04/2025"},{"negocio":"venta","fecha":"08/04/2025","producto":"Vaquillas","cantidad":110,"peso_kg":361.25,"peso_neto":361.25,"peso_bruto":381.0,"precio_bs_kg":19.0,"unidad":null,"lugar":"Abejas","comprador":"Frigor","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Vaquillas","id":14,"ingresado":"08/04/2025"},{"negocio":"venta","fecha":"11/04/2025","producto":"Torillos","cantidad":33,"peso_kg":420.0,"peso_neto":420.0,"peso_bruto":442.0,"precio_bs_kg":19.0,"unidad":null,"lugar":"san Pedro","comprador":"Frigosi","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Torillos","id":15,"ingresado":"11/04/2025"},{"negocio":"venta","fecha":"09/04/2025","producto":"Torillos","cantidad":68,"peso_kg":214.0,"peso_neto":null,"peso_bruto":214.0,"precio_bs_kg":20.0,"unidad":null,"lugar":"Santa Ana de Chiquitos","comprador":"La Flauta (Tres Cruces)","vendedor":null,"notas":null,"remitente":"Diego Bocangel","categoria":"Torillos","id":16,"ingresado":"09/04/2025"},{"negocio":"venta","fecha":"26/03/2025","producto":"Torillos 2 años","cantidad":280,"peso_kg":384.29,"peso_neto":384.29,"peso_bruto":404.52,"precio_bs_kg":18.5,"unidad":"Kg","lugar":"San Martin","comprador":"Fridosa SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":17,"ingresado":"26/03/2025"},{"negocio":"venta","fecha":"02/04/2025","producto":"Torillos 2 años","cantidad":300,"peso_kg":341.38,"peso_neto":341.38,"peso_bruto":359.35,"precio_bs_kg":19.0,"unidad":"Kg","lugar":"San Martin","comprador":"BFC SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":18,"ingresado":"02/04/2025"},{"negocio":"venta","fecha":"03/04/2025","producto":"Torillos 2 años","cantidad":105,"peso_kg":383.33,"peso_neto":383.33,"peso_bruto":403.51,"precio_bs_kg":18.6,"unidad":"Kg","lugar":"San Martin","comprador":"Manuel Saavedra","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":19,"ingresado":"03/04/2025"},{"negocio":"venta","fecha":"07/04/2025","producto":"Torillos 2 años","cantidad":300,"peso_kg":332.79,"peso_neto":332.79,"peso_bruto":350.3,"precio_bs_kg":19.0,"unidad":"Kg","lugar":"San Martin","comprador":"BFC SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":20,"ingresado":"07/04/2025"},{"negocio":"compra","fecha":"04/04/2025","producto":"Destetes 7 meses","cantidad":130,"peso_kg":216.55,"peso_neto":null,"peso_bruto":216.55,"precio_bs_kg":19.6,"unidad":"Kg","lugar":"El Naranjal","comprador":null,"vendedor":"Fernando Antezana","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":21,"ingresado":"04/04/2025"},{"negocio":"compra","fecha":"09/04/2025","producto":"Destetes 6 meses","cantidad":528,"peso_kg":213.12,"peso_neto":null,"peso_bruto":213.12,"precio_bs_kg":20.9,"unidad":"Kg","lugar":"Los Robles","comprador":null,"vendedor":"Milan Marinkovic","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":22,"ingresado":"09/04/2025"},{"negocio":"compra","fecha":"11/04/2025","producto":"Destetes 8 meses","cantidad":158,"peso_kg":256.0,"peso_neto":null,"peso_bruto":256.0,"precio_bs_kg":20.5,"unidad":"Kg","lugar":"Canaan","comprador":null,"vendedor":"Marcelo Morales","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":23,"ingresado":"11/04/2025"},{"negocio":"compra","fecha":"25/03/2025","producto":"Ganamic x 500 ml","cantidad":8,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":301.67,"unidad":"ml","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Ganamic x 500 ml","id":24,"ingresado":"25/03/2025"},{"negocio":"compra","fecha":"02/04/2025","producto":"Kerasil x 1 kg","cantidad":10,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":3.5,"unidad":"Kg","lugar":"Santa Cruz","comprador":null,"vendedor":"Agropunto del Oriente SRL","notas":null,"remitente":"Matías Honnen","categoria":"Kerasil x 1 kg","id":25,"ingresado":"02/04/2025"},{"negocio":"compra","fecha":"09/04/2025","producto":"Caravana microchip","cantidad":3000,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":11.98,"unidad":"pieza","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Caravana microchip","id":26,"ingresado":"09/04/2025"},{"negocio":"compra","fecha":"10/04/2025","producto":"Camisas (uniforme)","cantidad":71,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":119.14,"unidad":"pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Marema Textiles","notas":null,"remitente":"Matías Honnen","categoria":"Camisas (uniforme)","id":27,"ingresado":"10/04/2025"},{"negocio":"compra","fecha":"20/03/2025","producto":"Electrobomba 12 V 550 W","cantidad":1,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":3.673,"unidad":"Pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Le Mans Ltda.","notas":null,"remitente":"Matías Honnen","categoria":"Electrobomba 12 V 550 W","id":28,"ingresado":"20/03/2025"},{"negocio":"compra","fecha":"07/03/2025","producto":"Manta Silo 180 micrones 14x50x180","cantidad":8,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":4.887,"unidad":"Pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Grupo Landivar SA","notas":null,"remitente":"Matías Honnen","categoria":"Manta Silo 180 micrones 14x50x","id":29,"ingresado":"07/03/2025"},{"negocio":"venta","fecha":"13/04/2025","producto":"Vaquillas","cantidad":120,"peso_kg":379.91,"peso_neto":379.91,"peso_bruto":399.9,"precio_bs_kg":19.0,"unidad":"kg","lugar":"Prop. San José","comprador":"Matadero BFC","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Vaquillas","id":30,"ingresado":"13/04/2025"},{"negocio":"venta","fecha":"14/04/2025","producto":"Vaquillas","cantidad":15,"peso_kg":392.0,"peso_neto":392.0,"peso_bruto":null,"precio_bs_kg":18.72,"unidad":"kg","lugar":"Santa Cruz","comprador":"Fercogan","vendedor":null,"notas":null,"remitente":"Jose Pepe Knize","categoria":"Vaquillas","id":31,"ingresado":"14/04/2025"},{"negocio":"venta","fecha":"15/04/2025","producto":"Torillos Confinamiento","cantidad":326,"peso_kg":397.89,"peso_neto":397.89,"peso_bruto":null,"precio_bs_kg":19.0,"unidad":"kg","lugar":"Los Tojos","comprador":"Fridosa","vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Torillos","id":32,"ingresado":"15/04/2025"},{"negocio":"compra","fecha":"16/04/2025","producto":"Ivergen Platinum 3.15% x 500 ml","cantidad":75,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":428.0,"unidad":"frasco","lugar":"Santa Cruz","comprador":null,"vendedor":"Raza Fuerte SRL","notas":null,"remitente":"Matías Honnen","categoria":"Ivergen Platinum 3.15% x 500 m","id":33,"ingresado":"16/04/2025"},{"negocio":"compra","fecha":"16/04/2025","producto":"Biomectina x 1 Lt","cantidad":10,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":334.18,"unidad":"frasco","lugar":"Santa Cruz","comprador":null,"vendedor":"Raza Fuerte SRL","notas":null,"remitente":"Matías Honnen","categoria":"Biomectina x 1 Lt","id":34,"ingresado":"16/04/2025"},{"negocio":"compra","fecha":"16/04/2025","producto":"Tristemic x 100 ml","cantidad":400,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":147.87,"unidad":"frasco","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Tristemic x 100 ml","id":35,"ingresado":"16/04/2025"},{"negocio":"compra","fecha":"16/04/2025","producto":"Nutri 40 Top -Na","cantidad":10,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":5.09,"unidad":"Tn","lugar":"Santa Cruz","comprador":null,"vendedor":"Agropunto del Oriente SRL","notas":null,"remitente":"Matías Honnen","categoria":"Nutri 40 Top -Na","id":36,"ingresado":"16/04/2025"},{"negocio":"compra","fecha":"02/04/2025","producto":"Kerasil x 1 kg","cantidad":10,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":3.0,"unidad":"Kg","lugar":"Santa Cruz","comprador":null,"vendedor":"Agropunto del Oriente SRL","notas":null,"remitente":"Matías Honnen","categoria":"Kerasil x 1 kg","id":37,"ingresado":"02/04/2025"},{"negocio":"venta","fecha":"16/04/2025","producto":"Torillos","cantidad":120,"peso_kg":280.0,"peso_neto":280.0,"peso_bruto":null,"precio_bs_kg":19.5,"unidad":"kg","lugar":"El Puerto","comprador":"La Flauta","vendedor":null,"notas":null,"remitente":"Miguel Hernan Simon Nogales","categoria":"Torillos","id":38,"ingresado":"16/04/2025"},{"negocio":"venta","fecha":"21/04/2025","producto":"Toros","cantidad":300,"peso_kg":390.0,"peso_neto":390.0,"peso_bruto":411.0,"precio_bs_kg":19.5,"unidad":"kg","lugar":"Prop. San José","comprador":"Confinamiento BFC","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Toros","id":39,"ingresado":"21/04/2025"},{"negocio":"venta","fecha":"21/04/2025","producto":"Toros gordos","cantidad":41,"peso_kg":436.0,"peso_neto":436.0,"peso_bruto":459.0,"precio_bs_kg":20.0,"unidad":"kg","lugar":"Prop. San José","comprador":"Matadero BFC","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Toros","id":40,"ingresado":"21/04/2025"},{"negocio":"compra","fecha":"25/04/2025","producto":"Vacuna Excell 10 x 250 ml","cantidad":42,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":210.0,"unidad":"frasco","lugar":"San Rafael","comprador":null,"vendedor":"Alianza Pecuaria","notas":null,"remitente":"Matías Honnen","categoria":"Vacuna Excell 10 x 250 ml","id":41,"ingresado":"25/04/2025"},{"negocio":"venta","fecha":"22/04/2025","producto":"Toros","cantidad":500,"peso_kg":364.0,"peso_neto":364.0,"peso_bruto":383.0,"precio_bs_kg":19.0,"unidad":"kg","lugar":"Prop. Azucaro","comprador":"Confinamiento BFC","vendedor":null,"notas":null,"remitente":"Diego Bocangel","categoria":"Toros","id":42,"ingresado":"22/04/2025"},{"negocio":"venta","fecha":"24/04/2025","producto":"Toros","cantidad":380,"peso_kg":362.0,"peso_neto":362.0,"peso_bruto":362.0,"precio_bs_kg":17.5,"unidad":"kg","lugar":"Prop. San Pedro","comprador":"Conf Sotagsa","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Toros","id":43,"ingresado":"24/04/2025"},{"negocio":"venta","fecha":"25/04/2025","producto":"Torillos 2 años","cantidad":500,"peso_kg":350.72,"peso_neto":350.72,"peso_bruto":369.18,"precio_bs_kg":19.5,"unidad":"Kg","lugar":"San Martin","comprador":"BFC SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":44,"ingresado":"25/04/2025"},{"negocio":"venta","fecha":"26/04/2025","producto":"Torillos 2 años","cantidad":95,"peso_kg":321.1,"peso_neto":321.1,"peso_bruto":338.0,"precio_bs_kg":19.6,"unidad":"Kg","lugar":"San Judas","comprador":"Menono Manitoba","vendedor":null,"notas":null,"remitente":"Pedro Davoli","categoria":"Torillos","id":45,"ingresado":"26/04/2025"},{"negocio":"venta","fecha":"28/04/2025","producto":"Torillos 2 años","cantidad":300,"peso_kg":350.95,"peso_neto":350.95,"peso_bruto":369.42,"precio_bs_kg":19.5,"unidad":"Kg","lugar":"San Martin","comprador":"Frigor SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":46,"ingresado":"28/04/2025"},{"negocio":"compra","fecha":"28/04/2025","producto":"Aceite 15w40 Extravida XV 300","cantidad":1,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":10.091,"unidad":"tambor x 205 Lt","lugar":"Santa Cruz","comprador":null,"vendedor":"Prodimsa SA","notas":null,"remitente":"Matías Honnen","categoria":"Aceite 15w40 Extravida XV 300","id":47,"ingresado":"28/04/2025"},{"negocio":"compra","fecha":"28/04/2025","producto":"Aceite hidráulico 10w30 Hidro 19","cantidad":1,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":8.495,"unidad":"tambor x 205 Lt","lugar":"Santa Cruz","comprador":null,"vendedor":"Prodimsa SA","notas":null,"remitente":"Matías Honnen","categoria":"Aceite hidráulico 10w30 Hidro ","id":48,"ingresado":"28/04/2025"},{"negocio":"compra","fecha":"29/04/2025","producto":"Maxityl Platinum x 100 ml","cantidad":8,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":394.62,"unidad":"frasco","lugar":"Santa Cruz","comprador":null,"vendedor":"Raza Fuerte SRL","notas":null,"remitente":"Matías Honnen","categoria":"Maxityl Platinum x 100 ml","id":49,"ingresado":"29/04/2025"},{"negocio":"compra","fecha":"30/04/2025","producto":"Torillos 1 años","cantidad":142,"peso_kg":227.0,"peso_neto":null,"peso_bruto":227.0,"precio_bs_kg":23.48,"unidad":"Kg","lugar":null,"comprador":null,"vendedor":"FERCOGAN","notas":null,"remitente":"Diego Bocangel","categoria":"Torillos","id":50,"ingresado":"30/04/2025"},{"negocio":"venta","fecha":"30/04/2025","producto":"Torillos 2 años","cantidad":200,"peso_kg":377.0,"peso_neto":377.0,"peso_bruto":397.0,"precio_bs_kg":20.8,"unidad":"Kg","lugar":"San José","comprador":"Jacob friesen (Confinamiento)","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Torillos","id":51,"ingresado":"30/04/2025"},{"negocio":"venta","fecha":"02/05/2025","producto":"Torillos","cantidad":100,"peso_kg":434.0,"peso_neto":434.0,"peso_bruto":457.0,"precio_bs_kg":20.5,"unidad":"Kg","lugar":"Abejas","comprador":"Fridosa","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":52,"ingresado":"02/05/2025"},{"negocio":"venta","fecha":"02/05/2025","producto":"Vaca","cantidad":1,"peso_kg":455.0,"peso_neto":455.0,"peso_bruto":479.0,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"El Puerto","comprador":"minero","vendedor":null,"notas":null,"remitente":"Miguel Hernan Simon Nogales","categoria":"Vacas","id":53,"ingresado":"02/05/2025"},{"negocio":"venta","fecha":"05/05/2025","producto":"Vaquilla","cantidad":70,"peso_kg":364.0,"peso_neto":364.0,"peso_bruto":383.0,"precio_bs_kg":19.5,"unidad":"Kg","lugar":"Santa Maria","comprador":"Fridosa","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Vaquillas","id":54,"ingresado":"05/05/2025"},{"negocio":"compra","fecha":"05/05/2025","producto":"Postes","cantidad":369,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":36.0,"unidad":"Pza","lugar":"Abejas","comprador":null,"vendedor":"Angel ‎<Se editó este mensaje.>","notas":null,"remitente":"Gerardo Aramayo","categoria":"Postes","id":55,"ingresado":"05/05/2025"},{"negocio":"compra","fecha":"05/05/2025","producto":"Machones","cantidad":69,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":240.0,"unidad":"Pza","lugar":"Abejas","comprador":null,"vendedor":"Angel ‎<Se editó este mensaje.>","notas":null,"remitente":"Gerardo Aramayo","categoria":"Machones","id":56,"ingresado":"05/05/2025"},{"negocio":"venta","fecha":"06/05/2025","producto":"Torillos","cantidad":60,"peso_kg":367.0,"peso_neto":367.0,"peso_bruto":388.0,"precio_bs_kg":20.8,"unidad":"Kg","lugar":"San José","comprador":"Sara Knelsen de Martens","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Torillos","id":57,"ingresado":"06/05/2025"},{"negocio":"venta","fecha":"07/05/2025","producto":"Torillos 2 años","cantidad":606,"peso_kg":363.84,"peso_neto":363.84,"peso_bruto":382.99,"precio_bs_kg":20.6,"unidad":"Kg","lugar":"San Martin","comprador":"Johann Antelo","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":58,"ingresado":"07/05/2025"},{"negocio":"compra","fecha":"09/05/2025","producto":"Destetes 8 meses","cantidad":175,"peso_kg":257.7,"peso_neto":null,"peso_bruto":257.7,"precio_bs_kg":21.4,"unidad":"Kg","lugar":"Tucavaca","comprador":null,"vendedor":"Ezequiel Chávez","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":59,"ingresado":"09/05/2025"},{"negocio":"compra","fecha":"09/05/2025","producto":"Destetes 8 meses","cantidad":206,"peso_kg":250.5,"peso_neto":null,"peso_bruto":250.5,"precio_bs_kg":21.4,"unidad":"Kg","lugar":"Las Petas","comprador":null,"vendedor":"Gilberto Chávez","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":60,"ingresado":"09/05/2025"},{"negocio":"venta","fecha":"13/05/2025","producto":"Vacas","cantidad":101,"peso_kg":447.0,"peso_neto":447.0,"peso_bruto":477.0,"precio_bs_kg":18.0,"unidad":"Kg","lugar":"Sosiego","comprador":"Frigosi","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Vacas","id":61,"ingresado":"13/05/2025"},{"negocio":"compra","fecha":"13/05/2025","producto":"Destetes 7 meses","cantidad":120,"peso_kg":216.14,"peso_neto":null,"peso_bruto":216.14,"precio_bs_kg":21.4,"unidad":"Kg","lugar":"Las Petas","comprador":null,"vendedor":"Gilberto Chávez","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":62,"ingresado":"13/05/2025"},{"negocio":"compra","fecha":"13/05/2025","producto":"Destetes 8 meses","cantidad":128,"peso_kg":251.84,"peso_neto":null,"peso_bruto":251.84,"precio_bs_kg":20.5,"unidad":"Kg","lugar":"Canaan","comprador":null,"vendedor":"Marcelo Morales","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":63,"ingresado":"13/05/2025"},{"negocio":"compra","fecha":"12/05/2025","producto":"Torillos","cantidad":72,"peso_kg":265.0,"peso_neto":null,"peso_bruto":265.0,"precio_bs_kg":23.03,"unidad":"Kg","lugar":"FERCOGAN","comprador":null,"vendedor":"FERCOGAN","notas":null,"remitente":"Diego Bocangel","categoria":"Torillos","id":64,"ingresado":"12/05/2025"},{"negocio":"compra","fecha":"13/05/2025","producto":"Vaquillas","cantidad":58,"peso_kg":220.0,"peso_neto":null,"peso_bruto":220.0,"precio_bs_kg":20.04,"unidad":"Kg","lugar":"FERCOGAN","comprador":null,"vendedor":"FERCOGAN","notas":null,"remitente":"Diego Bocangel","categoria":"Vaquillas","id":65,"ingresado":"13/05/2025"},{"negocio":"venta","fecha":"14/05/2025","producto":"Toros","cantidad":150,"peso_kg":344.57,"peso_neto":344.57,"peso_bruto":362.7,"precio_bs_kg":20.5,"unidad":"kg","lugar":"san andres","comprador":"Sofía","vendedor":null,"notas":null,"remitente":"Edgardo Dito Cuellar","categoria":"Toros","id":66,"ingresado":"14/05/2025"},{"negocio":"compra","fecha":"15/05/2025","producto":"Adaptador Min. x 500 ml","cantidad":50,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":512.47,"unidad":"frasco","lugar":"Santa Cruz","comprador":null,"vendedor":"Totalpec SRL","notas":null,"remitente":"Matías Honnen","categoria":"Adaptador Min. x 500 ml","id":67,"ingresado":"15/05/2025"},{"negocio":"compra","fecha":"15/05/2025","producto":"Adaptador Vit. x 500 ml","cantidad":50,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":512.47,"unidad":"frasco","lugar":"Santa Cruz","comprador":null,"vendedor":"Totalpec SRL","notas":null,"remitente":"Matías Honnen","categoria":"Adaptador Vit. x 500 ml","id":68,"ingresado":"15/05/2025"},{"negocio":"venta","fecha":"17/05/2025","producto":"Torillos","cantidad":300,"peso_kg":290.0,"peso_neto":290.0,"peso_bruto":305.0,"precio_bs_kg":20.0,"unidad":"kg","lugar":"san judas","comprador":"menono manitoba","vendedor":null,"notas":null,"remitente":"Pedro Davoli","categoria":"Torillos","id":69,"ingresado":"17/05/2025"},{"negocio":"venta","fecha":"17/05/2025","producto":"Vaquillas","cantidad":90,"peso_kg":215.0,"peso_neto":215.0,"peso_bruto":333.0,"precio_bs_kg":19.5,"unidad":"kg","lugar":"san judas","comprador":"menono manitoba","vendedor":null,"notas":null,"remitente":"Pedro Davoli","categoria":"Vaquillas","id":70,"ingresado":"17/05/2025"},{"negocio":"compra","fecha":"14/05/2025","producto":"Torillos","cantidad":128,"peso_kg":235.0,"peso_neto":null,"peso_bruto":235.0,"precio_bs_kg":25.23,"unidad":"Kg","lugar":"FERCOGAN","comprador":null,"vendedor":"FERCOGAN","notas":null,"remitente":"Diego Bocangel","categoria":"Torillos","id":71,"ingresado":"14/05/2025"},{"negocio":"compra","fecha":"07/ 05/ 2025","producto":"Hembras","cantidad":121,"peso_kg":155.59,"peso_neto":null,"peso_bruto":155.59,"precio_bs_kg":19.0,"unidad":"Kg","lugar":"San Ramón","comprador":null,"vendedor":"José Luis Cronembold","notas":null,"remitente":"Jose Pepe Knize","categoria":"Hembras","id":72,"ingresado":"07/ 05/ 2025"},{"negocio":"compra","fecha":"07/05/2025","producto":"Machos","cantidad":221,"peso_kg":182.33,"peso_neto":null,"peso_bruto":182.33,"precio_bs_kg":22.5,"unidad":"Kg","lugar":"San Ramón","comprador":null,"vendedor":"José Luis Cronembold","notas":null,"remitente":"Jose Pepe Knize","categoria":"Machos","id":73,"ingresado":"07/05/2025"},{"negocio":"venta","fecha":"21/05/2025","producto":"Torillos 2 años","cantidad":583,"peso_kg":337.26,"peso_neto":337.26,"peso_bruto":355.01,"precio_bs_kg":20.9,"unidad":"Kg","lugar":"San Martin","comprador":"Johann Antelo","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":74,"ingresado":"21/05/2025"},{"negocio":"venta","fecha":"22/05/2025","producto":"Vaquillas 2 años","cantidad":70,"peso_kg":357.92,"peso_neto":357.92,"peso_bruto":376.76,"precio_bs_kg":19.0,"unidad":"Kg","lugar":"Los Tojos","comprador":"Fridosa","vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Vaquillas","id":75,"ingresado":"22/05/2025"},{"negocio":"compra","fecha":"22/05/2025","producto":"Aceite 15w40 Extravida XV 300","cantidad":2,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":11.956,"unidad":"tambor x 205 Lt","lugar":"Santa Cruz","comprador":null,"vendedor":"Prodimsa SA","notas":null,"remitente":"Matías Honnen","categoria":"Aceite 15w40 Extravida XV 300","id":76,"ingresado":"22/05/2025"},{"negocio":"compra","fecha":"22/05/2025","producto":"Aceite hidráulico 10w30 Hidro 19","cantidad":2,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":10.021,"unidad":"tambor x 205 Lt","lugar":"Santa Cruz","comprador":null,"vendedor":"Prodimsa SA","notas":null,"remitente":"Matías Honnen","categoria":"Aceite hidráulico 10w30 Hidro ","id":77,"ingresado":"22/05/2025"},{"negocio":"compra","fecha":"22/05/2025","producto":"Aceite Röd 4T 20w50 (motocicletas)","cantidad":100,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":62.87,"unidad":"bidón x 1 Lt","lugar":"Santa Cruz","comprador":null,"vendedor":"Prodimsa SA","notas":null,"remitente":"Matías Honnen","categoria":"Aceite Röd 4T 20w50 (motocicle","id":78,"ingresado":"22/05/2025"},{"negocio":"compra","fecha":"22/05/2025","producto":"Silobolsa Standard 160 micrones 6\"x200\" (1.83M x 61M) Cap 90 Ton","cantidad":8,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":4.167,"unidad":"pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Resinas Plásticas Bolivia SRL","notas":null,"remitente":"Matías Honnen","categoria":"Silobolsa Standard 160 microne","id":79,"ingresado":"22/05/2025"},{"negocio":"compra","fecha":"23/05/2025","producto":"Destetes 8 meses","cantidad":129,"peso_kg":249.99,"peso_neto":null,"peso_bruto":249.99,"precio_bs_kg":21.4,"unidad":"Kg","lugar":"Las Petas","comprador":null,"vendedor":"Gilberto Chávez","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":80,"ingresado":"23/05/2025"},{"negocio":"venta","fecha":"23/05/2025","producto":"Torillos","cantidad":100,"peso_kg":267.0,"peso_neto":267.0,"peso_bruto":283.0,"precio_bs_kg":21.8,"unidad":"kg","lugar":"san judas","comprador":"menono manitoba","vendedor":null,"notas":null,"remitente":"Pedro Davoli","categoria":"Torillos","id":81,"ingresado":"23/05/2025"},{"negocio":"venta","fecha":"26/05/2025","producto":"Torillos 2 años","cantidad":150,"peso_kg":356.77,"peso_neto":356.77,"peso_bruto":375.55,"precio_bs_kg":20.9,"unidad":"Kg","lugar":"San Martin","comprador":"Frigor SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":82,"ingresado":"26/05/2025"},{"negocio":"venta","fecha":"28/05/2025","producto":"Torillos 2 años","cantidad":150,"peso_kg":402.0,"peso_neto":402.0,"peso_bruto":423.0,"precio_bs_kg":21.0,"unidad":"Kg","lugar":"Abejas","comprador":"Fridosa Confinamiento","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":83,"ingresado":"28/05/2025"},{"negocio":"venta","fecha":"29/05/2025","producto":"Vaquillas 2 años","cantidad":52,"peso_kg":328.0,"peso_neto":328.0,"peso_bruto":345.0,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"Los Tojos","comprador":"Hernan Tababary","vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Vaquillas","id":84,"ingresado":"29/05/2025"},{"negocio":"venta","fecha":"30/05/2025","producto":"Vacas","cantidad":50,"peso_kg":458.0,"peso_neto":458.0,"peso_bruto":482.0,"precio_bs_kg":18.0,"unidad":"Kg","lugar":"Sosiego","comprador":"Frigosi","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Vacas","id":85,"ingresado":"30/05/2025"},{"negocio":"venta","fecha":"30/05/2025","producto":"Torillos 2 años","cantidad":295,"peso_kg":355.69,"peso_neto":355.69,"peso_bruto":374.41,"precio_bs_kg":21.2,"unidad":"Kg","lugar":"San Martin","comprador":"Johann Antelo Nacif","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":86,"ingresado":"30/05/2025"},{"negocio":"venta","fecha":"30/05/2025","producto":"Torillos 2 años","cantidad":105,"peso_kg":405.47,"peso_neto":405.47,"peso_bruto":426.81,"precio_bs_kg":20.2,"unidad":"Kg","lugar":"San Martin","comprador":"Johann Antelo","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":87,"ingresado":"30/05/2025"},{"negocio":"venta","fecha":"02/06/2025","producto":"Vacas","cantidad":48,"peso_kg":441.0,"peso_neto":441.0,"peso_bruto":464.0,"precio_bs_kg":18.0,"unidad":"Kg","lugar":"Sosiego","comprador":"Frigosi","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Vacas","id":88,"ingresado":"02/06/2025"},{"negocio":"venta","fecha":"02/06/2025","producto":"Toros","cantidad":5,"peso_kg":669.0,"peso_neto":669.0,"peso_bruto":704.0,"precio_bs_kg":21.0,"unidad":"Kg","lugar":"Sosiego","comprador":"Frigosi","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Toros","id":89,"ingresado":"02/06/2025"},{"negocio":"compra","fecha":"02/06/2025","producto":"Destetes 8 meses","cantidad":150,"peso_kg":156.0,"peso_neto":null,"peso_bruto":156.0,"precio_bs_kg":22.0,"unidad":"Kg","lugar":"sosiego","comprador":null,"vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Terneros","id":90,"ingresado":"02/06/2025"},{"negocio":"compra","fecha":"02/06/2025","producto":"Vaquillas 23","cantidad":65,"peso_kg":187.0,"peso_neto":null,"peso_bruto":187.0,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"sosiego","comprador":null,"vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Vaquillas","id":91,"ingresado":"02/06/2025"},{"negocio":"venta","fecha":"02/06/2025","producto":"Torillos","cantidad":150,"peso_kg":373.66,"peso_neto":373.66,"peso_bruto":393.33,"precio_bs_kg":21.0,"unidad":"Kg","lugar":"Los Tojos","comprador":"Fridosa","vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Torillos","id":92,"ingresado":"02/06/2025"},{"negocio":"venta","fecha":"04/06/2025","producto":"Vaquillas 2 años","cantidad":50,"peso_kg":328.0,"peso_neto":328.0,"peso_bruto":345.0,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"Los Tojos","comprador":"Hernan Tababary","vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Vaquillas","id":93,"ingresado":"04/06/2025"},{"negocio":"compra","fecha":"03/06/2025","producto":"Destetes 8 meses","cantidad":180,"peso_kg":274.87,"peso_neto":null,"peso_bruto":274.87,"precio_bs_kg":23.0,"unidad":"Kg","lugar":"Charagua","comprador":null,"vendedor":"Miguel Gutierrez","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":94,"ingresado":"03/06/2025"},{"negocio":"venta","fecha":"05/06/2025","producto":"Torillos 2 años","cantidad":209,"peso_kg":446.41,"peso_neto":446.41,"peso_bruto":469.91,"precio_bs_kg":21.0,"unidad":"Kg","lugar":"San Martin","comprador":"BFC SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":95,"ingresado":"05/06/2025"},{"negocio":"compra","fecha":"05/06/2025","producto":"Vaquillas 12 meses","cantidad":250,"peso_kg":184.5,"peso_neto":null,"peso_bruto":184.5,"precio_bs_kg":19.0,"unidad":"Kg","lugar":"San Xavier","comprador":null,"vendedor":null,"notas":null,"remitente":"Diego Bocangel","categoria":"Vaquillas","id":96,"ingresado":"05/06/2025"},{"negocio":"compra","fecha":"09/06/2025","producto":"Aceite 80W90 - EVORA","cantidad":1,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":1.169,"unidad":"Bidón 20 litros","lugar":"Santa Cruz","comprador":null,"vendedor":"Mainter","notas":null,"remitente":"Bruno Bocangel","categoria":"Aceite 80W90 - EVORA","id":97,"ingresado":"09/06/2025"},{"negocio":"compra","fecha":"09/06/2025","producto":"Aceite AW68 - EVORA","cantidad":1,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":904.28,"unidad":"Bidón 20 litros","lugar":"Santa Cruz","comprador":null,"vendedor":"Mainter","notas":null,"remitente":"Bruno Bocangel","categoria":"Aceite AW68 - EVORA","id":98,"ingresado":"09/06/2025"},{"negocio":"compra","fecha":"07/06/2025","producto":"Vaquillas","cantidad":56,"peso_kg":287.0,"peso_neto":287.0,"peso_bruto":296.0,"precio_bs_kg":20.5,"unidad":"Kg","lugar":"Abejas","comprador":null,"vendedor":"Kenia","notas":null,"remitente":"Gerardo Aramayo","categoria":"Vaquillas","id":99,"ingresado":"07/06/2025"},{"negocio":"compra","fecha":"07/06/2025","producto":"Vacas","cantidad":98,"peso_kg":429.4,"peso_neto":429.4,"peso_bruto":452.0,"precio_bs_kg":17.5,"unidad":"Kg","lugar":"Abejas","comprador":null,"vendedor":"Kenia ‎<Se editó este mensaje.>","notas":null,"remitente":"Gerardo Aramayo","categoria":"Vacas","id":100,"ingresado":"07/06/2025"},{"negocio":"compra","fecha":"10/06/2025","producto":"Motor de 5.5 HP 4P T2 JM Motors","cantidad":1,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":3.702,"unidad":"pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Importadora TOA Ltda","notas":null,"remitente":"Matías Honnen","categoria":"Motor de 5.5 HP 4P T2 JM Motor","id":101,"ingresado":"10/06/2025"},{"negocio":"compra","fecha":"10/06/2025","producto":"Motor de 4 HP 4P T220 JM Motors","cantidad":1,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":2.978,"unidad":"pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Importadora TOA Ltda","notas":null,"remitente":"Matías Honnen","categoria":"Motor de 4 HP 4P T220 JM Motor","id":102,"ingresado":"10/06/2025"},{"negocio":"compra","fecha":"10/06/2025","producto":"Jaula para balanza","cantidad":1,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":24.0,"unidad":"pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Juan Adad","notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Jaula para balanza","id":103,"ingresado":"10/06/2025"},{"negocio":"venta","fecha":"11/06/2025","producto":"Torillos 1 año 10 meses","cantidad":210,"peso_kg":371.37,"peso_neto":371.37,"peso_bruto":390.92,"precio_bs_kg":22.0,"unidad":"Kg","lugar":"San Martin","comprador":"Marcelo de Oliveira Vaca","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":104,"ingresado":"11/06/2025"},{"negocio":"compra","fecha":"13/06/2025","producto":"Destetes 8 meses","cantidad":181,"peso_kg":240.54,"peso_neto":null,"peso_bruto":240.54,"precio_bs_kg":20.5,"unidad":"Kg","lugar":"Canaan","comprador":null,"vendedor":"Marcelo Morales","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":105,"ingresado":"13/06/2025"},{"negocio":"compra","fecha":"13/06/2025","producto":"Terneros 7 meses","cantidad":518,"peso_kg":220.15,"peso_neto":220.15,"peso_bruto":null,"precio_bs_kg":23.13,"unidad":"Kg","lugar":"Ibiza (Mora)","comprador":null,"vendedor":"Mario A. Vasquez","notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Terneros","id":106,"ingresado":"13/06/2025"},{"negocio":"compra","fecha":"03/06/2025","producto":"Cepo elite ultra","cantidad":1,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":101.85,"unidad":"pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Juan Adad","notas":null,"remitente":"Jose P Simon","categoria":"Cepo elite ultra","id":107,"ingresado":"03/06/2025"},{"negocio":"compra","fecha":"04/06/2025","producto":"Balanza Tru-test JR5000 con baston","cantidad":1,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":113.758,"unidad":"pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Vet Union","notas":null,"remitente":"Jose P Simon","categoria":"Balanza Tru-test JR5000 con ba","id":108,"ingresado":"04/06/2025"},{"negocio":"venta","fecha":"14/06/2025","producto":"Torillos 1 año 2 meses","cantidad":114,"peso_kg":293.0,"peso_neto":null,"peso_bruto":293.0,"precio_bs_kg":22.9,"unidad":"Kg","lugar":"Sosiego","comprador":"Menona","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Torillos","id":109,"ingresado":"14/06/2025"},{"negocio":"compra","fecha":"14/06/2025","producto":"Terneros 7 meses","cantidad":334,"peso_kg":172.64,"peso_neto":172.64,"peso_bruto":181.63,"precio_bs_kg":22.5,"unidad":null,"lugar":"Quebrada Blanca","comprador":null,"vendedor":"José Luis Cronembold","notas":null,"remitente":"Edgardo Dito Cuellar","categoria":"Terneros","id":110,"ingresado":"14/06/2025"},{"negocio":"compra","fecha":"14/06/2025","producto":"Terneras 7 meses","cantidad":280,"peso_kg":160.84,"peso_neto":160.84,"peso_bruto":169.3,"precio_bs_kg":19.0,"unidad":null,"lugar":"Quebrada Blanca","comprador":null,"vendedor":"José Luis Cronembold","notas":null,"remitente":"Edgardo Dito Cuellar","categoria":"Terneros","id":111,"ingresado":"14/06/2025"},{"negocio":"venta","fecha":"16/06/2025","producto":"Torillos","cantidad":150,"peso_kg":403.0,"peso_neto":403.0,"peso_bruto":424.0,"precio_bs_kg":22.0,"unidad":"Kg","lugar":"Abejas","comprador":"Fridosa Confinamiento","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":112,"ingresado":"16/06/2025"},{"negocio":"venta","fecha":"16/06/2025","producto":"Torillos","cantidad":100,"peso_kg":365.0,"peso_neto":365.0,"peso_bruto":384.5,"precio_bs_kg":22.5,"unidad":"Kg","lugar":"La flauta","comprador":"Chimarrita Confinamiento","vendedor":null,"notas":null,"remitente":"Bruno Bocangel","categoria":"Torillos","id":113,"ingresado":"16/06/2025"},{"negocio":"venta","fecha":"13/06/2025","producto":"Vaquillas","cantidad":58,"peso_kg":350.98,"peso_neto":350.98,"peso_bruto":369.45,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"San Andrés","comprador":"Frigovel","vendedor":null,"notas":null,"remitente":"Jose Pepe Knize","categoria":"Vaquillas","id":114,"ingresado":"13/06/2025"},{"negocio":"venta","fecha":"17/06/2025","producto":"Torillos 1 año 10 meses","cantidad":300,"peso_kg":336.0,"peso_neto":336.0,"peso_bruto":353.68,"precio_bs_kg":22.0,"unidad":"Kg","lugar":"San Martin","comprador":"Frigor SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":115,"ingresado":"17/06/2025"},{"negocio":"venta","fecha":"19/06/2025","producto":"Torillos 2 años","cantidad":250,"peso_kg":443.74,"peso_neto":443.74,"peso_bruto":467.09,"precio_bs_kg":22.0,"unidad":"Kg","lugar":"San Martin","comprador":"BFC SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":116,"ingresado":"19/06/2025"},{"negocio":"venta","fecha":"20/06/2025","producto":"Torillos","cantidad":350,"peso_kg":387.7,"peso_neto":387.7,"peso_bruto":408.0,"precio_bs_kg":22.5,"unidad":"Kg","lugar":"Abejas","comprador":"Inducarne Confinamiento ‎<Se editó este mensaje.>","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":117,"ingresado":"20/06/2025"},{"negocio":"compra","fecha":"21/06/2025","producto":"Torillos","cantidad":500,"peso_kg":299.1,"peso_neto":299.1,"peso_bruto":314.9,"precio_bs_kg":23.0,"unidad":"Kg","lugar":"Remanzo","comprador":null,"vendedor":"Selim Majluf ‎<Se editó este mensaje.>","notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":118,"ingresado":"21/06/2025"},{"negocio":"venta","fecha":"20/06/2025","producto":"Torillos","cantidad":257,"peso_kg":247.0,"peso_neto":247.0,"peso_bruto":260.0,"precio_bs_kg":22.1,"unidad":"Kg","lugar":"San Judas","comprador":"Menonita Confinamiento","vendedor":null,"notas":null,"remitente":"Pedro Davoli","categoria":"Torillos","id":119,"ingresado":"20/06/2025"},{"negocio":"venta","fecha":"25/06/2025","producto":"Vacas descarte vacías","cantidad":11,"peso_kg":434.0,"peso_neto":434.0,"peso_bruto":456.0,"precio_bs_kg":17.15,"unidad":"Kg","lugar":"Fercogan","comprador":"‎[25/6/25, 12:44:43] Pedro Davoli: ‎<adjunto: 00000297-PHOTO-2025-06-25-12-44-43.jpg>","vendedor":null,"notas":null,"remitente":"Pedro Davoli","categoria":"Vacas","id":120,"ingresado":"25/06/2025"},{"negocio":"venta","fecha":"25/06/2025","producto":"Vaquillas","cantidad":135,"peso_kg":378.0,"peso_neto":378.0,"peso_bruto":398.0,"precio_bs_kg":19.5,"unidad":"Kg","lugar":"San José","comprador":"BFC","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Vaquillas","id":121,"ingresado":"25/06/2025"},{"negocio":"venta","fecha":"25/06/2025","producto":"Torillos","cantidad":150,"peso_kg":350.0,"peso_neto":350.0,"peso_bruto":369.0,"precio_bs_kg":22.8,"unidad":"Kg","lugar":"AZUCARO","comprador":"BFC","vendedor":null,"notas":null,"remitente":"Diego Bocangel","categoria":"Torillos","id":122,"ingresado":"25/06/2025"},{"negocio":"compra","fecha":"26/06/2025","producto":"Terneros destete","cantidad":175,"peso_kg":152.46,"peso_neto":152.46,"peso_bruto":152.46,"precio_bs_kg":24.11,"unidad":null,"lugar":"Trinidad","comprador":null,"vendedor":"Carlos Czernievics","notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Terneros","id":123,"ingresado":"26/06/2025"},{"negocio":"compra","fecha":"26/06/2025","producto":"Terneras destete","cantidad":46,"peso_kg":178.37,"peso_neto":178.37,"peso_bruto":178.37,"precio_bs_kg":20.57,"unidad":null,"lugar":"Trinidad","comprador":null,"vendedor":"Carlos Czernievics","notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Terneros","id":124,"ingresado":"26/06/2025"},{"negocio":"compra","fecha":"18/06/2025","producto":"Destetes 6 meses","cantidad":491,"peso_kg":172.14,"peso_neto":null,"peso_bruto":172.14,"precio_bs_kg":26.5,"unidad":"Kg","lugar":"Los Robles","comprador":null,"vendedor":"Milan Marinkovic","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":125,"ingresado":"18/06/2025"},{"negocio":"compra","fecha":"21/06/2025","producto":"Destetes 7 meses","cantidad":70,"peso_kg":228.34,"peso_neto":null,"peso_bruto":228.34,"precio_bs_kg":23.0,"unidad":"Kg","lugar":"El Naranjal","comprador":null,"vendedor":"Fernando Antezana","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":126,"ingresado":"21/06/2025"},{"negocio":"compra","fecha":"27/06/2025","producto":"Destetes 8 meses","cantidad":384,"peso_kg":229.06,"peso_neto":null,"peso_bruto":229.06,"precio_bs_kg":21.4,"unidad":"Kg","lugar":"Tucavaca","comprador":null,"vendedor":"Ezequiel Chávez","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":127,"ingresado":"27/06/2025"},{"negocio":"venta","fecha":"27/06/2025","producto":"Vaquillonas 22/23","cantidad":151,"peso_kg":313.0,"peso_neto":313.0,"peso_bruto":330.0,"precio_bs_kg":19.5,"unidad":"Kg","lugar":"sosiego","comprador":"Sotagsa","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Vaquillas","id":128,"ingresado":"27/06/2025"},{"negocio":"venta","fecha":"27/06/2025","producto":"Torillos","cantidad":300,"peso_kg":361.0,"peso_neto":361.0,"peso_bruto":380.0,"precio_bs_kg":23.0,"unidad":"Kg","lugar":"San José","comprador":"BFC Confinamiento","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Torillos","id":129,"ingresado":"27/06/2025"},{"negocio":"venta","fecha":"29/06/2025","producto":"Vaquillas","cantidad":120,"peso_kg":350.0,"peso_neto":350.0,"peso_bruto":368.0,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"San José","comprador":"BFC","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Vaquillas","id":130,"ingresado":"29/06/2025"},{"negocio":"venta","fecha":"30/06/2025","producto":"Torillos 2 años","cantidad":250,"peso_kg":469.87,"peso_neto":469.87,"peso_bruto":494.6,"precio_bs_kg":22.5,"unidad":"Kg","lugar":"San Martin","comprador":"BFC SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":131,"ingresado":"30/06/2025"},{"negocio":"venta","fecha":"02/07/2025","producto":"Vaquillas","cantidad":117,"peso_kg":367.0,"peso_neto":367.0,"peso_bruto":388.0,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"Santa Maria","comprador":"Frigor","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Vaquillas","id":132,"ingresado":"02/07/2025"},{"negocio":"compra","fecha":"04/07/2025","producto":"Destetes 8 meses","cantidad":320,"peso_kg":218.67,"peso_neto":null,"peso_bruto":218.67,"precio_bs_kg":21.4,"unidad":"Kg","lugar":"Las Petas","comprador":null,"vendedor":"Gilberto Chávez","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":133,"ingresado":"04/07/2025"},{"negocio":"compra","fecha":"04/07/2025","producto":"Destetes 8 meses","cantidad":47,"peso_kg":200.0,"peso_neto":null,"peso_bruto":200.0,"precio_bs_kg":26.0,"unidad":"Kg","lugar":"san Rafael","comprador":null,"vendedor":"Pepe Knize","notas":null,"remitente":"Ricardo Hueso Terceros","categoria":"Terneros","id":134,"ingresado":"04/07/2025"},{"negocio":"venta","fecha":"03/07/2025","producto":"Vaquillas","cantidad":30,"peso_kg":214.0,"peso_neto":214.0,"peso_bruto":226.0,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"San Judas","comprador":"Azurdui","vendedor":null,"notas":null,"remitente":"Pedro Davoli","categoria":"Vaquillas","id":135,"ingresado":"03/07/2025"},{"negocio":"compra","fecha":"04/07/2025","producto":"Sorgo","cantidad":437,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":80.0,"unidad":"Kg","lugar":"sosiego","comprador":null,"vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Sorgo","id":136,"ingresado":"04/07/2025"},{"negocio":"venta","fecha":"07/07/2025","producto":"Vaquillas","cantidad":110,"peso_kg":320.0,"peso_neto":320.0,"peso_bruto":338.0,"precio_bs_kg":20.0,"unidad":null,"lugar":"Los Tojos","comprador":"Jorge Kefer","vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Vaquillas","id":137,"ingresado":"07/07/2025"},{"negocio":"compra","fecha":"06/06/2025","producto":"Maíz","cantidad":254,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":107.0,"unidad":"Qq","lugar":"Hacienda Verde","comprador":null,"vendedor":"Nico Toews","notas":null,"remitente":"Matías Honnen","categoria":"Maíz","id":138,"ingresado":"06/06/2025"},{"negocio":"compra","fecha":"11/06/2025","producto":"Cascarilla de soya","cantidad":609,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":95.0,"unidad":"Qq","lugar":"Puerto Quijarro","comprador":null,"vendedor":"Vitalia Cabello Veizaga","notas":null,"remitente":"Matías Honnen","categoria":"Cascarilla de soya","id":139,"ingresado":"11/06/2025"},{"negocio":"compra","fecha":"18/06/2025","producto":"Maíz","cantidad":759,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":113.0,"unidad":"Qq","lugar":null,"comprador":null,"vendedor":"Wilhelm Peters Thiessen","notas":null,"remitente":"Matías Honnen","categoria":"Maíz","id":140,"ingresado":"18/06/2025"},{"negocio":"compra","fecha":"18/06/2025","producto":"Maíz","cantidad":808,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":113.0,"unidad":"Qq","lugar":null,"comprador":null,"vendedor":"Franz Penner Klassen","notas":null,"remitente":"Matías Honnen","categoria":"Maíz","id":141,"ingresado":"18/06/2025"},{"negocio":"compra","fecha":"20/06/2025","producto":"Maíz","cantidad":722,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":110.0,"unidad":"Qq","lugar":null,"comprador":null,"vendedor":"Wieler Wiebe Corne","notas":null,"remitente":"Matías Honnen","categoria":"Maíz","id":142,"ingresado":"20/06/2025"},{"negocio":"compra","fecha":"23/06/2025","producto":"Sorgo","cantidad":2518,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":85.0,"unidad":"Qq","lugar":null,"comprador":null,"vendedor":"Henry Gutierrez Ayala","notas":null,"remitente":"Matías Honnen","categoria":"Sorgo","id":143,"ingresado":"23/06/2025"},{"negocio":"compra","fecha":"24/06/2025","producto":"Alimento balanceado para destete precoz","cantidad":2000,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":7.4,"unidad":"Kg","lugar":"Santa Cruz","comprador":null,"vendedor":"Pablo Maria Diaz Saubidet","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":144,"ingresado":"24/06/2025"},{"negocio":"compra","fecha":"26/06/2025","producto":"Maíz","cantidad":1591,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":100.0,"unidad":"Qq","lugar":null,"comprador":null,"vendedor":"Clodo Aldo Rodriguez Machuca","notas":null,"remitente":"Matías Honnen","categoria":"Maíz","id":145,"ingresado":"26/06/2025"},{"negocio":"compra","fecha":"08/07/2025","producto":"Harina de Soya Solvente","cantidad":100,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":3500.0,"unidad":"Tn","lugar":"Santa Cruz","comprador":null,"vendedor":"Granos-Empresa de Servicio Agro-Industrial","notas":null,"remitente":"Matías Honnen","categoria":"Harina de Soya Solvente","id":146,"ingresado":"08/07/2025"},{"negocio":"compra","fecha":"09/07/2025","producto":"Destetes 7 meses","cantidad":180,"peso_kg":239.49,"peso_neto":null,"peso_bruto":239.49,"precio_bs_kg":23.0,"unidad":"Kg","lugar":"Charagua","comprador":null,"vendedor":"Miguel Gutierrez Bowles","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":147,"ingresado":"09/07/2025"},{"negocio":"venta","fecha":"10/07/2025","producto":"Torillos","cantidad":162,"peso_kg":369.55,"peso_neto":369.55,"peso_bruto":389.0,"precio_bs_kg":23.0,"unidad":null,"lugar":"Los Tojos","comprador":"Sotagsa","vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Torillos","id":148,"ingresado":"10/07/2025"},{"negocio":"compra","fecha":"10/07/2025","producto":"Rollos (miyagui + gatton)","cantidad":200,"peso_kg":400.0,"peso_neto":null,"peso_bruto":400.0,"precio_bs_kg":180.0,"unidad":"Kg","lugar":"campo 1 menonas","comprador":null,"vendedor":"menona","notas":null,"remitente":"Gonzalo Nogales","categoria":"Rollos (miyagui + gatton)","id":149,"ingresado":"10/07/2025"},{"negocio":"venta","fecha":"08/07/2025","producto":"Vacas","cantidad":76,"peso_kg":380.0,"peso_neto":380.0,"peso_bruto":405.0,"precio_bs_kg":16.5,"unidad":null,"lugar":"Precio ajustado al campo","comprador":"Inducarne","vendedor":null,"notas":null,"remitente":"Gonzalo Nogales","categoria":"Vacas","id":150,"ingresado":"08/07/2025"},{"negocio":"venta","fecha":"10/07/2025","producto":"Vaquillas","cantidad":63,"peso_kg":210.0,"peso_neto":210.0,"peso_bruto":216.0,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"San Judas","comprador":"🐝","vendedor":null,"notas":null,"remitente":"Pedro Davoli","categoria":"Vaquillas","id":151,"ingresado":"10/07/2025"},{"negocio":"venta","fecha":"10/07/2025","producto":"Vaquillas","cantidad":120,"peso_kg":318.0,"peso_neto":318.0,"peso_bruto":334.0,"precio_bs_kg":21.5,"unidad":"Kg","lugar":"San José","comprador":"Peter Cordich","vendedor":null,"notas":null,"remitente":"Hugo Rojas","categoria":"Vaquillas","id":152,"ingresado":"10/07/2025"},{"negocio":"compra","fecha":"11/07/2025","producto":"Destetes 8 meses","cantidad":120,"peso_kg":247.23,"peso_neto":null,"peso_bruto":247.23,"precio_bs_kg":25.0,"unidad":"Kg","lugar":"Canaan","comprador":null,"vendedor":"Marcelo Morales","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":153,"ingresado":"11/07/2025"},{"negocio":"compra","fecha":"11/07/2025","producto":"Microchip reutilizable","cantidad":1454,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":20.53,"unidad":"pieza","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Microchip reutilizable","id":154,"ingresado":"11/07/2025"},{"negocio":"venta","fecha":"11/07/2025","producto":"Torillos","cantidad":400,"peso_kg":364.2,"peso_neto":364.2,"peso_bruto":382.4,"precio_bs_kg":23.0,"unidad":"Kg","lugar":"Abejas","comprador":"BFC Confinamiento","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":155,"ingresado":"11/07/2025"},{"negocio":"venta","fecha":"11/07/2025","producto":"Torillos","cantidad":114,"peso_kg":422.4,"peso_neto":422.4,"peso_bruto":444.7,"precio_bs_kg":23.0,"unidad":"Kg","lugar":"Abejas","comprador":"BFC Nacional","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":156,"ingresado":"11/07/2025"},{"negocio":"compra","fecha":"11/07/2025","producto":"Destetes 8 meses","cantidad":75,"peso_kg":168.0,"peso_neto":null,"peso_bruto":168.0,"precio_bs_kg":25.5,"unidad":"Kg","lugar":"Portachuelo","comprador":null,"vendedor":"Carlos guardia","notas":null,"remitente":"Diego Bocangel","categoria":"Terneros","id":157,"ingresado":"11/07/2025"},{"negocio":"compra","fecha":"16/07/2025","producto":"Sorgo","cantidad":225761,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":95.0,"unidad":"Qq","lugar":"San Martin","comprador":null,"vendedor":"Hugo Marcelo Morales Jordan","notas":null,"remitente":"Matías Honnen","categoria":"Sorgo","id":158,"ingresado":"16/07/2025"},{"negocio":"venta","fecha":"11/07/2025","producto":"Machos 24 meses","cantidad":110,"peso_kg":399.0,"peso_neto":399.0,"peso_bruto":420.0,"precio_bs_kg":22.5,"unidad":null,"lugar":"San Jose ( pailon sur )","comprador":"Fridosa confinamiento","vendedor":null,"notas":null,"remitente":"Gonzalo Nogales","categoria":"Machos 24 meses","id":159,"ingresado":"11/07/2025"},{"negocio":"venta","fecha":"17/07/2025","producto":"Torillos 2 años","cantidad":295,"peso_kg":329.63,"peso_neto":329.63,"peso_bruto":346.98,"precio_bs_kg":23.0,"unidad":"Kg","lugar":"San Martin","comprador":"Frigor SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":160,"ingresado":"17/07/2025"},{"negocio":"venta","fecha":"17/07/2025","producto":"Torillos 2 años","cantidad":100,"peso_kg":359.9,"peso_neto":359.9,"peso_bruto":379.8,"precio_bs_kg":23.0,"unidad":"Kg","lugar":"AZUCARO","comprador":"BFC SA","vendedor":null,"notas":null,"remitente":"Diego Bocangel","categoria":"Torillos","id":161,"ingresado":"17/07/2025"},{"negocio":"compra","fecha":"23/07/2025","producto":"Sorgo","cantidad":100,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":84.0,"unidad":"Qq","lugar":"San Jose","comprador":null,"vendedor":"Tobias Toews","notas":null,"remitente":"Gonzalo Nogales","categoria":"Sorgo","id":162,"ingresado":"23/07/2025"},{"negocio":"compra","fecha":"23/07/2025","producto":"Cascarilla soya","cantidad":240,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":80.0,"unidad":"Qq","lugar":"San Jose","comprador":null,"vendedor":"intermediario","notas":null,"remitente":"Gonzalo Nogales","categoria":"Cascarilla soya","id":163,"ingresado":"23/07/2025"},{"negocio":"compra","fecha":"23/07/2025","producto":"Destetes 7 meses","cantidad":287,"peso_kg":224.15,"peso_neto":null,"peso_bruto":224.15,"precio_bs_kg":25.0,"unidad":"Kg","lugar":"Dalmacia","comprador":null,"vendedor":"Marcos Andres Maggi","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":164,"ingresado":"23/07/2025"},{"negocio":"compra","fecha":"23/07/2025","producto":"Destetes 8 meses","cantidad":132,"peso_kg":285.42,"peso_neto":null,"peso_bruto":285.42,"precio_bs_kg":25.0,"unidad":"Kg","lugar":"Dalmacia","comprador":null,"vendedor":"Marcos Andres Maggi","notas":null,"remitente":"Matías Honnen","categoria":"Terneros","id":165,"ingresado":"23/07/2025"},{"negocio":"compra","fecha":"28/07/2025","producto":"Sorgo","cantidad":81848,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":99.0,"unidad":"Qq","lugar":"San Martin","comprador":null,"vendedor":"Nico Toews","notas":null,"remitente":"Matías Honnen","categoria":"Sorgo","id":166,"ingresado":"28/07/2025"},{"negocio":"compra","fecha":"28/07/2025","producto":"Geomembrana de 1.50 mm 4 módulos 1x60 M","cantidad":4,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":4.8,"unidad":"Pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Grupo Landivar SA","notas":null,"remitente":"Matías Honnen","categoria":"Geomembrana de 1.50 mm 4 módul","id":167,"ingresado":"28/07/2025"},{"negocio":"compra","fecha":"28/07/2025","producto":"Geomembrana de 1.50 mm 2 módulos 1x70 M","cantidad":2,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":5.6,"unidad":"Pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Grupo Landivar SA","notas":null,"remitente":"Matías Honnen","categoria":"Geomembrana de 1.50 mm 2 módul","id":168,"ingresado":"28/07/2025"},{"negocio":"compra","fecha":"29/07/2025","producto":"Sorgo","cantidad":75043,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":99.0,"unidad":"Qq","lugar":"San Martin","comprador":null,"vendedor":"Nico Toews","notas":null,"remitente":"Matías Honnen","categoria":"Sorgo","id":169,"ingresado":"29/07/2025"},{"negocio":"compra","fecha":"26/07/2025","producto":"Vaquillas","cantidad":200,"peso_kg":209.0,"peso_neto":null,"peso_bruto":209.0,"precio_bs_kg":19.5,"unidad":"Kg","lugar":"Trinidad","comprador":null,"vendedor":"Cristina Cuaino ‎<Se editó este mensaje.>","notas":null,"remitente":"Gerardo Aramayo","categoria":"Vaquillas","id":170,"ingresado":"26/07/2025"},{"negocio":"compra","fecha":"26/07/2025","producto":"Vaquillas","cantidad":70,"peso_kg":265.0,"peso_neto":null,"peso_bruto":265.0,"precio_bs_kg":19.0,"unidad":"Kg","lugar":"Trinidad","comprador":null,"vendedor":"Cristina Cuaino","notas":null,"remitente":"Gerardo Aramayo","categoria":"Vaquillas","id":171,"ingresado":"26/07/2025"},{"negocio":"compra","fecha":"26/07/2025","producto":"Torillos","cantidad":15,"peso_kg":234.0,"peso_neto":null,"peso_bruto":234.0,"precio_bs_kg":22.0,"unidad":"Kg","lugar":"Trinidad","comprador":null,"vendedor":"Cristina Cuaino","notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":172,"ingresado":"26/07/2025"},{"negocio":"venta","fecha":"02/08/2025","producto":"Vaquillonas","cantidad":35,"peso_kg":425.0,"peso_neto":425.0,"peso_bruto":447.0,"precio_bs_kg":20.0,"unidad":null,"lugar":"Confinamiento SAN Miguel","comprador":"Frigovel","vendedor":null,"notas":null,"remitente":"Jose Pepe Knize","categoria":"Vaquillas","id":173,"ingresado":"02/08/2025"},{"negocio":"venta","fecha":"01/08/2025","producto":"Vaquillas","cantidad":150,"peso_kg":357.2,"peso_neto":357.2,"peso_bruto":376.0,"precio_bs_kg":20.5,"unidad":null,"lugar":"San José","comprador":"Frigor.","vendedor":null,"notas":null,"remitente":"Ricardo Hueso Terceros","categoria":"Vaquillas","id":174,"ingresado":"01/08/2025"},{"negocio":"compra","fecha":"31/07/2025","producto":"Vaquillas","cantidad":103,"peso_kg":275.0,"peso_neto":null,"peso_bruto":275.0,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"vecino","comprador":null,"vendedor":"jenny Paz","notas":null,"remitente":"Ricardo Hueso Terceros","categoria":"Vaquillas","id":175,"ingresado":"31/07/2025"},{"negocio":"compra","fecha":"02/08/2025","producto":"Vaquillas destetes","cantidad":185,"peso_kg":235.0,"peso_neto":null,"peso_bruto":235.0,"precio_bs_kg":22.0,"unidad":"Kg","lugar":"robore","comprador":null,"vendedor":"Luis fernando Baptista","notas":null,"remitente":"Ricardo Hueso Terceros","categoria":"Vaquillas","id":176,"ingresado":"02/08/2025"},{"negocio":"venta","fecha":"05/08/2025","producto":"Torillos","cantidad":70,"peso_kg":288.66,"peso_neto":288.66,"peso_bruto":303.85,"precio_bs_kg":23.0,"unidad":null,"lugar":"San Judas","comprador":"Abeja","vendedor":null,"notas":null,"remitente":"Pedro Davoli","categoria":"Torillos","id":177,"ingresado":"05/08/2025"},{"negocio":"venta","fecha":"13/08/2025","producto":"Toros reproductores","cantidad":22,"peso_kg":517.0,"peso_neto":null,"peso_bruto":517.0,"precio_bs_kg":27.0,"unidad":null,"lugar":"San Judas","comprador":"Los Turos","vendedor":null,"notas":null,"remitente":"Pedro Davoli","categoria":"Toros","id":178,"ingresado":"13/08/2025"},{"negocio":"venta","fecha":"13/08/2025","producto":"Vaquillas","cantidad":252,"peso_kg":384.75,"peso_neto":384.75,"peso_bruto":405.0,"precio_bs_kg":20.7,"unidad":null,"lugar":"Abejas","comprador":"Frigor","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Vaquillas","id":179,"ingresado":"13/08/2025"},{"negocio":"venta","fecha":"13/08/2025","producto":"Vacas","cantidad":92,"peso_kg":453.15,"peso_neto":453.15,"peso_bruto":477.0,"precio_bs_kg":18.7,"unidad":null,"lugar":"Abejas","comprador":"Frigor","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Vacas","id":180,"ingresado":"13/08/2025"},{"negocio":"venta","fecha":"22/08/2025","producto":"Vacas","cantidad":41,"peso_kg":407.0,"peso_neto":407.0,"peso_bruto":429.0,"precio_bs_kg":18.5,"unidad":null,"lugar":"Sosiego","comprador":"Frigosi","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Vacas","id":181,"ingresado":"22/08/2025"},{"negocio":"compra","fecha":"21/08/2025","producto":"Sorgo","cantidad":400,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":86.0,"unidad":null,"lugar":"Agropunto","comprador":null,"vendedor":"Agropunto","notas":null,"remitente":"Gerardo Aramayo","categoria":"Sorgo","id":182,"ingresado":"21/08/2025"},{"negocio":"venta","fecha":"27/08/2025","producto":"Vacas","cantidad":100,"peso_kg":432.0,"peso_neto":432.0,"peso_bruto":null,"precio_bs_kg":19.0,"unidad":null,"lugar":"El Toro ( confi Fridosa)","comprador":"Fridosa","vendedor":null,"notas":null,"remitente":"Gonzalo Nogales","categoria":"Vacas","id":183,"ingresado":"27/08/2025"},{"negocio":"venta","fecha":"Producto: torillos C3","producto":"Torillos C3","cantidad":60,"peso_kg":280290.0,"peso_neto":280290.0,"peso_bruto":null,"precio_bs_kg":null,"unidad":null,"lugar":"San José","comprador":"‎[28/8/25, 11:42:58] Miguel Gutierrez: ‎<adjunto: 00000425-PHOTO-2025-08-28-11-42-58.jpg>","vendedor":null,"notas":null,"remitente":"Pablo Diaz Saubidet","categoria":"Torillos","id":184,"ingresado":"Producto: torillos C3"},{"negocio":"compra","fecha":"02/09/2025","producto":"Soya Solvente","cantidad":35,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":4000.0,"unidad":null,"lugar":"Cotoca","comprador":null,"vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Soya Solvente","id":185,"ingresado":"02/09/2025"},{"negocio":"compra","fecha":"01/09/2025","producto":"Piolin 500 metros (9 alambres)","cantidad":4,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":437.0,"unidad":null,"lugar":null,"comprador":null,"vendedor":"Tecnoser","notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Piolin 500 metros (9 alambres)","id":186,"ingresado":"01/09/2025"},{"negocio":"compra","fecha":"01/09/2025","producto":"Aislador de varilla regulable","cantidad":100,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":6.3,"unidad":null,"lugar":null,"comprador":null,"vendedor":"Tecnoser ‎<Se editó este mensaje.>","notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Aislador de varilla regulable","id":187,"ingresado":"01/09/2025"},{"negocio":"venta","fecha":"28/08/2025","producto":"Torillos 2.5 años","cantidad":40,"peso_kg":248.33,"peso_neto":248.33,"peso_bruto":499.3,"precio_bs_kg":42.0,"unidad":"Kg","lugar":"Frigorífico BFC San Ignacio","comprador":"BFC SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":188,"ingresado":"28/08/2025"},{"negocio":"compra","fecha":"2908/2025","producto":"Núcleo Confinamiento Plus (+ Sec. Micotoxinas)","cantidad":12,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":6.35,"unidad":"Tn","lugar":"Santa Cruz","comprador":null,"vendedor":"Agropunto del Oriente","notas":null,"remitente":"Matías Honnen","categoria":"Núcleo Confinamiento Plus (+ S","id":189,"ingresado":"2908/2025"},{"negocio":"compra","fecha":"03/09/2025","producto":"Torillos 9 meses","cantidad":315,"peso_kg":283.48,"peso_neto":null,"peso_bruto":283.48,"precio_bs_kg":23.7,"unidad":"Kg","lugar":"La Lola","comprador":null,"vendedor":"Carlos Pablo Klinsky Fernandez","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":190,"ingresado":"03/09/2025"},{"negocio":"compra","fecha":"03/09/2025","producto":"Torillos 9 meses","cantidad":233,"peso_kg":290.93,"peso_neto":null,"peso_bruto":290.93,"precio_bs_kg":23.7,"unidad":"Kg","lugar":"La Lola","comprador":null,"vendedor":"Mariana Cecilia Perrella","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":191,"ingresado":"03/09/2025"},{"negocio":"venta","fecha":"3/09","producto":"Vacas mayores","cantidad":18,"peso_kg":434.0,"peso_neto":434.0,"peso_bruto":457.0,"precio_bs_kg":null,"unidad":null,"lugar":"Toborochi","comprador":null,"vendedor":null,"notas":null,"remitente":"Jose Pepe Knize","categoria":"Vacas","id":192,"ingresado":"3/09"},{"negocio":"compra","fecha":"04/09/2025","producto":"Caravana microchip reutilizable botón amarillo","cantidad":548,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":17.81,"unidad":"pieza","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Caravana microchip reutilizabl","id":193,"ingresado":"04/09/2025"},{"negocio":"venta","fecha":"4/09","producto":"Vacas mayores","cantidad":45,"peso_kg":445.55,"peso_neto":445.55,"peso_bruto":469.0,"precio_bs_kg":null,"unidad":null,"lugar":"conf san miguel ‎<Se editó este mensaje.>","comprador":null,"vendedor":null,"notas":null,"remitente":"Ricardo Hueso Terceros","categoria":"Vacas","id":194,"ingresado":"4/09"},{"negocio":"venta","fecha":"10/09","producto":"Toros 22 a 23 meses","cantidad":45,"peso_kg":486.0,"peso_neto":486.0,"peso_bruto":512.0,"precio_bs_kg":24.5,"unidad":null,"lugar":"Confinamiento San Miguel","comprador":"Frigor","vendedor":null,"notas":null,"remitente":"Jose Pepe Knize","categoria":"Toros","id":195,"ingresado":"10/09"},{"negocio":"venta","fecha":"10/09","producto":"Vacas mayores","cantidad":23,"peso_kg":460.0,"peso_neto":460.0,"peso_bruto":484.0,"precio_bs_kg":20.5,"unidad":null,"lugar":"Confinamiento San Miguel","comprador":"Frigor","vendedor":null,"notas":null,"remitente":"Jose Pepe Knize","categoria":"Vacas","id":196,"ingresado":"10/09"},{"negocio":"venta","fecha":"10/09","producto":"Toros Brangus 22 y 23 meses","cantidad":12,"peso_kg":471.0,"peso_neto":471.0,"peso_bruto":495.0,"precio_bs_kg":24.5,"unidad":null,"lugar":"Confinamiento San Miguel","comprador":"Santa Fe","vendedor":null,"notas":null,"remitente":"Jose Pepe Knize","categoria":"Toros","id":197,"ingresado":"10/09"},{"negocio":"compra","fecha":"20/09/2025","producto":"Semilla de Mombasa grafitada (VC 76%)","cantidad":288,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":55.26,"unidad":null,"lugar":"Santa Cruz","comprador":null,"vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Semilla de Mombasa grafitada (","id":198,"ingresado":"20/09/2025"},{"negocio":"compra","fecha":"20/09/2025","producto":"Semilla de MG5 grafitada (VC 80%)","cantidad":336,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":67.92,"unidad":null,"lugar":"Santa Cruz","comprador":null,"vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Semilla de MG5 grafitada (VC 8","id":199,"ingresado":"20/09/2025"},{"negocio":"compra","fecha":"08/10/2025","producto":"Torillos","cantidad":28,"peso_kg":250.0,"peso_neto":250.0,"peso_bruto":null,"precio_bs_kg":null,"unidad":null,"lugar":"Fercogan","comprador":null,"vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Torillos","id":200,"ingresado":"08/10/2025"},{"negocio":"compra","fecha":"08/10/2025","producto":"Vaquillas","cantidad":61,"peso_kg":206.0,"peso_neto":206.0,"peso_bruto":null,"precio_bs_kg":null,"unidad":null,"lugar":null,"comprador":null,"vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Vaquillas","id":201,"ingresado":"08/10/2025"},{"negocio":"compra","fecha":"30/09/2025","producto":"Vaquillas","cantidad":167,"peso_kg":210.0,"peso_neto":210.0,"peso_bruto":null,"precio_bs_kg":null,"unidad":null,"lugar":"La Flauta","comprador":null,"vendedor":"Hacienda HN","notas":null,"remitente":"Bruno Bocangel","categoria":"Vaquillas","id":202,"ingresado":"30/09/2025"},{"negocio":"compra","fecha":"03/09/2025","producto":"Torillos 9 meses","cantidad":315,"peso_kg":283.48,"peso_neto":null,"peso_bruto":283.48,"precio_bs_kg":23.7,"unidad":"Kg","lugar":"La Lola","comprador":null,"vendedor":"Carlos Pablo Klinsky Fernandez","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":203,"ingresado":"03/09/2025"},{"negocio":"compra","fecha":"03/09/2025","producto":"Torillos 9 meses","cantidad":233,"peso_kg":290.93,"peso_neto":null,"peso_bruto":290.93,"precio_bs_kg":23.7,"unidad":"Kg","lugar":"La Lola","comprador":null,"vendedor":"Mariana Cecilia Perrella","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":204,"ingresado":"03/09/2025"},{"negocio":"compra","fecha":"04/09/2025","producto":"Caravana microchip reutilizable botón amarillo","cantidad":548,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":17.81,"unidad":"pieza","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Caravana microchip reutilizabl","id":205,"ingresado":"04/09/2025"},{"negocio":"compra","fecha":"15/09/2025","producto":"Vacuna Excell 10 x 250 ml","cantidad":10,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":297.0,"unidad":"frasco","lugar":"San Martin","comprador":null,"vendedor":"Meganutri SRL","notas":null,"remitente":"Matías Honnen","categoria":"Vacuna Excell 10 x 250 ml","id":206,"ingresado":"15/09/2025"},{"negocio":"compra","fecha":"23/09/2025","producto":"Vacuna Excell 10 x 250 ml","cantidad":50,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":297.0,"unidad":"frasco","lugar":"San Martin","comprador":null,"vendedor":"Meganutri SRL","notas":null,"remitente":"Matías Honnen","categoria":"Vacuna Excell 10 x 250 ml","id":207,"ingresado":"23/09/2025"},{"negocio":"compra","fecha":"23/09/2025","producto":"Bioanemin Oro x 250 ml","cantidad":8,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":213.81,"unidad":"frasco","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Bioanemin Oro x 250 ml","id":208,"ingresado":"23/09/2025"},{"negocio":"compra","fecha":"08/10/2025","producto":"Fluatac Duo x 5 Lt","cantidad":6,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":2.068,"unidad":"Bidón","lugar":"Santa Cruz","comprador":null,"vendedor":"Totalpec SRL","notas":null,"remitente":"Matías Honnen","categoria":"Fluatac Duo x 5 Lt","id":209,"ingresado":"08/10/2025"},{"negocio":"compra","fecha":"08/10/2025","producto":"Ariotak Duo 4.5 x 1 Lt","cantidad":30,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":475.95,"unidad":"Frasco","lugar":"Santa Cruz","comprador":null,"vendedor":"Tecnopec SRL","notas":null,"remitente":"Matías Honnen","categoria":"Ariotak Duo 4.5 x 1 Lt","id":210,"ingresado":"08/10/2025"},{"negocio":"compra","fecha":"08/10/2025","producto":"Ganador Alfa x 500 ml","cantidad":20,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":258.32,"unidad":"Frasco","lugar":"Santa Cruz","comprador":null,"vendedor":"Tecnopec SRL","notas":null,"remitente":"Matías Honnen","categoria":"Ganador Alfa x 500 ml","id":211,"ingresado":"08/10/2025"},{"negocio":"compra","fecha":"14/10/2025","producto":"Clonapyr x 5 Lt","cantidad":31,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":696.0,"unidad":"Bidón","lugar":"San Martin","comprador":null,"vendedor":"Vermont International Corporation SRL","notas":null,"remitente":"Matías Honnen","categoria":"Clonapyr x 5 Lt","id":212,"ingresado":"14/10/2025"},{"negocio":"compra","fecha":"14/10/2025","producto":"Herbamine 720 x 20 Lt","cantidad":10,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":960.48,"unidad":"Bidón","lugar":"San Martin","comprador":null,"vendedor":"Vermont International Corporation SRL","notas":null,"remitente":"Matías Honnen","categoria":"Herbamine 720 x 20 Lt","id":213,"ingresado":"14/10/2025"},{"negocio":"compra","fecha":"14/10/2025","producto":"Intertoxam 70% x 1 Kg","cantidad":100,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":170.52,"unidad":"Bolsa","lugar":"Santa Cruz","comprador":null,"vendedor":"Interagro SA","notas":null,"remitente":"Matías Honnen","categoria":"Intertoxam 70% x 1 Kg","id":214,"ingresado":"14/10/2025"},{"negocio":"compra","fecha":"14/10/2025","producto":"Interglifo Plus x 20 Lt","cantidad":25,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":1.252,"unidad":"Bidón","lugar":"Santa Cruz","comprador":null,"vendedor":"Interagro SA","notas":null,"remitente":"Matías Honnen","categoria":"Interglifo Plus x 20 Lt","id":215,"ingresado":"14/10/2025"},{"negocio":"compra","fecha":"14/10/2025","producto":"Inter Oil x 20 Lt","cantidad":6,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":1.183,"unidad":"Bidón","lugar":"Santa Cruz","comprador":null,"vendedor":"Interagro SA","notas":null,"remitente":"Matías Honnen","categoria":"Inter Oil x 20 Lt","id":216,"ingresado":"14/10/2025"},{"negocio":"compra","fecha":"14/10/2025","producto":"Luxor 5 EC x 5 Lt","cantidad":30,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":361.35,"unidad":"Bidón","lugar":"Santa Cruz","comprador":null,"vendedor":"Agripac SA","notas":null,"remitente":"Matías Honnen","categoria":"Luxor 5 EC x 5 Lt","id":217,"ingresado":"14/10/2025"},{"negocio":"compra","fecha":"14/10/2025","producto":"Spodox PS x 1 Kg","cantidad":200,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":234.05,"unidad":"Bolsa","lugar":"Santa Cruz","comprador":null,"vendedor":"Agripac SA","notas":null,"remitente":"Matías Honnen","categoria":"Spodox PS x 1 Kg","id":218,"ingresado":"14/10/2025"},{"negocio":"compra","fecha":"14/10/2025","producto":"Imago x 5 Lt","cantidad":24,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":864.4,"unidad":"Bidón","lugar":"Santa Cruz","comprador":null,"vendedor":"Agripac SA","notas":null,"remitente":"Matías Honnen","categoria":"Imago x 5 Lt","id":219,"ingresado":"14/10/2025"},{"negocio":"compra","fecha":"15/10/2025","producto":"Torillos 9 meses","cantidad":101,"peso_kg":278.4,"peso_neto":null,"peso_bruto":278.4,"precio_bs_kg":24.5,"unidad":"Kg","lugar":"La Lola","comprador":null,"vendedor":"Carlos Pablo Klinsky Fernandez","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":220,"ingresado":"15/10/2025"},{"negocio":"compra","fecha":"15/10/2025","producto":"Torillos 9 meses","cantidad":41,"peso_kg":284.34,"peso_neto":null,"peso_bruto":284.34,"precio_bs_kg":24.5,"unidad":"Kg","lugar":"La Lola","comprador":null,"vendedor":"Mariana Cecilia Perrella","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":221,"ingresado":"15/10/2025"},{"negocio":"compra","fecha":"14/10/2025","producto":"Gavac","cantidad":330,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":280.0,"unidad":"frcs de 15 ds","lugar":"Santa Cruz","comprador":null,"vendedor":"Vet Karivet","notas":null,"remitente":"Jose P Simon","categoria":"Gavac","id":222,"ingresado":"14/10/2025"},{"negocio":"compra","fecha":"14/10/2025","producto":"Alambre liso","cantidad":30,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":1065.0,"unidad":null,"lugar":"Santa Cruz","comprador":null,"vendedor":"agro alambres","notas":null,"remitente":"Jose P Simon","categoria":"Alambre liso","id":223,"ingresado":"14/10/2025"},{"negocio":"compra","fecha":"07/10/2025","producto":"Semilla humidicola","cantidad":300,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":230.0,"unidad":null,"lugar":"Santa Cruz","comprador":null,"vendedor":"Meganutri","notas":null,"remitente":"Jose P Simon","categoria":"Semilla humidicola","id":224,"ingresado":"07/10/2025"},{"negocio":"compra","fecha":"07/10/2025","producto":"Semilla decumbens","cantidad":200,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":56.0,"unidad":null,"lugar":"Santa Cruz","comprador":null,"vendedor":"Meganutri","notas":null,"remitente":"Jose P Simon","categoria":"Semilla decumbens","id":225,"ingresado":"07/10/2025"},{"negocio":"compra","fecha":"07/10/2025","producto":"Semilla Mara di","cantidad":200,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":63.0,"unidad":null,"lugar":"Santa Cruz","comprador":null,"vendedor":"Meganutri","notas":null,"remitente":"Jose P Simon","categoria":"Semilla Mara di","id":226,"ingresado":"07/10/2025"},{"negocio":"venta","fecha":"16/10/2025","producto":"Vacas","cantidad":34,"peso_kg":409.0,"peso_neto":null,"peso_bruto":409.0,"precio_bs_kg":21.0,"unidad":"Kg","lugar":"sosiego","comprador":"Frigosi","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Vacas","id":227,"ingresado":"16/10/2025"},{"negocio":"venta","fecha":"16/10/2025","producto":"Toro","cantidad":1,"peso_kg":411.0,"peso_neto":null,"peso_bruto":411.0,"precio_bs_kg":24.5,"unidad":"Kg","lugar":"sosiego","comprador":"Frigosi","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Toros","id":228,"ingresado":"16/10/2025"},{"negocio":"compra","fecha":"24/10/2025","producto":"Torillos 7 meses","cantidad":336,"peso_kg":187.0,"peso_neto":null,"peso_bruto":187.0,"precio_bs_kg":26.0,"unidad":"Kg","lugar":"El chacal","comprador":null,"vendedor":"Alfredo Alves","notas":null,"remitente":"Hugo Rojas","categoria":"Torillos","id":229,"ingresado":"24/10/2025"},{"negocio":"compra","fecha":"24/10/2025","producto":"Vaquillas 7 meses","cantidad":244,"peso_kg":177.0,"peso_neto":null,"peso_bruto":177.0,"precio_bs_kg":23.0,"unidad":"Kg","lugar":"El chacal","comprador":null,"vendedor":"Alfredo Alves","notas":null,"remitente":"Hugo Rojas","categoria":"Vaquillas","id":230,"ingresado":"24/10/2025"},{"negocio":"compra","fecha":"29/10/2025","producto":"Alambre eléctrico Unión x1000M","cantidad":55,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":870.7,"unidad":"Rollo","lugar":"San Martin","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Alambre eléctrico Unión x1000M","id":231,"ingresado":"29/10/2025"},{"negocio":"compra","fecha":"29/10/2025","producto":"Torillos 7 meses","cantidad":60,"peso_kg":239.27,"peso_neto":null,"peso_bruto":239.27,"precio_bs_kg":27.5,"unidad":"Kg","lugar":"Nueva India","comprador":null,"vendedor":"Edson Oliveira Vaca","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":232,"ingresado":"29/10/2025"},{"negocio":"compra","fecha":"25/10/2025","producto":"Vaquillas","cantidad":129,"peso_kg":241.36,"peso_neto":null,"peso_bruto":241.36,"precio_bs_kg":23.8,"unidad":"Kg","lugar":"Fraternidad (san Ignacio)","comprador":null,"vendedor":"Abelardo","notas":null,"remitente":"Diego Bocangel","categoria":"Vaquillas","id":233,"ingresado":"25/10/2025"},{"negocio":"venta","fecha":"29/10/2025","producto":"Torillos 2.5 años","cantidad":198,"peso_kg":475.34,"peso_neto":475.34,"peso_bruto":500.36,"precio_bs_kg":26.6,"unidad":"Kg","lugar":"San Martin","comprador":"Fridosa SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":234,"ingresado":"29/10/2025"},{"negocio":"compra","fecha":"29/10/2025","producto":"Vaquillas","cantidad":248,"peso_kg":257.0,"peso_neto":257.0,"peso_bruto":271.0,"precio_bs_kg":24.5,"unidad":null,"lugar":"San Ignacio","comprador":null,"vendedor":"Guido Nayar","notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Vaquillas","id":235,"ingresado":"29/10/2025"},{"negocio":"venta","fecha":"08/11/2025","producto":"Vacas descarte","cantidad":69,"peso_kg":391.0,"peso_neto":null,"peso_bruto":391.0,"precio_bs_kg":38.0,"unidad":"Kg","lugar":"Cruz Alta","comprador":"San Borja","vendedor":null,"notas":null,"remitente":"Miguel Hernan Simon Nogales","categoria":"Vacas","id":236,"ingresado":"08/11/2025"},{"negocio":"venta","fecha":"08/11/2025","producto":"Vacas descarte","cantidad":69,"peso_kg":371.0,"peso_neto":371.0,"peso_bruto":391.0,"precio_bs_kg":18.25,"unidad":"Kg","lugar":"Cruz Alta","comprador":"San Borja","vendedor":null,"notas":null,"remitente":"Pablo Diaz Saubidet","categoria":"Vacas","id":237,"ingresado":"08/11/2025"},{"negocio":"compra","fecha":"04/11/2025","producto":"Piata Suprema","cantidad":264,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":57.05,"unidad":"Kg","lugar":"Santa Cruz","comprador":null,"vendedor":"Totalpec SRL","notas":null,"remitente":"Matías Honnen","categoria":"Piata Suprema","id":238,"ingresado":"04/11/2025"},{"negocio":"compra","fecha":"04/11/2025","producto":"Zuri Suprema","cantidad":384,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":56.55,"unidad":"Kg","lugar":"Santa Cruz","comprador":null,"vendedor":"Totalpec SRL","notas":null,"remitente":"Matías Honnen","categoria":"Zuri Suprema","id":239,"ingresado":"04/11/2025"},{"negocio":"compra","fecha":"04/11/2025","producto":"Ruziziensis ILP PB 1","cantidad":720,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":36.8,"unidad":"Kg","lugar":"Santa Cruz","comprador":null,"vendedor":"Totalpec SRL","notas":null,"remitente":"Matías Honnen","categoria":"Ruziziensis ILP PB 1","id":240,"ingresado":"04/11/2025"},{"negocio":"compra","fecha":"12/11/2025","producto":"Vela de paso móvil grande","cantidad":4,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":385.09,"unidad":"Pieza","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Vela de paso móvil grande","id":241,"ingresado":"12/11/2025"},{"negocio":"compra","fecha":"12/11/2025","producto":"Aislador Roldana San Miguel","cantidad":1500,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":4.94,"unidad":"Pieza","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Aislador Roldana San Miguel","id":242,"ingresado":"12/11/2025"},{"negocio":"compra","fecha":"12/11/2025","producto":"Aislador Esq. Tensión 1000 Kg","cantidad":250,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":8.21,"unidad":"Pieza","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Aislador Esq. Tensión 1000 Kg","id":243,"ingresado":"12/11/2025"},{"negocio":"compra","fecha":"12/11/2025","producto":"Mango Aislante Doble Acción","cantidad":40,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":37.23,"unidad":"Pieza","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Mango Aislante Doble Acción","id":244,"ingresado":"12/11/2025"},{"negocio":"compra","fecha":"12/11/2025","producto":"Cable subterráneo 2.7mm x 50mt","cantidad":2,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":671.98,"unidad":"Rollo","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Cable subterráneo 2.7mm x 50mt","id":245,"ingresado":"12/11/2025"},{"negocio":"compra","fecha":"12/11/2025","producto":"Aislador Reg. N2","cantidad":100,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":7.09,"unidad":"Pieza","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Aislador Reg. N2","id":246,"ingresado":"12/11/2025"},{"negocio":"compra","fecha":"13/11/2025","producto":"Núcleo Advanced TMR","cantidad":5,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":4.65,"unidad":"Tn","lugar":"Santa Cruz","comprador":null,"vendedor":"Titanium Nutrición Animal","notas":null,"remitente":"Matías Honnen","categoria":"Núcleo Advanced TMR","id":247,"ingresado":"13/11/2025"},{"negocio":"compra","fecha":"17/11/2025","producto":"Torillos 1 año","cantidad":61,"peso_kg":242.1,"peso_neto":null,"peso_bruto":242.1,"precio_bs_kg":28.5,"unidad":"Kg","lugar":null,"comprador":null,"vendedor":"Marcelo de Oliveira Vaca","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":248,"ingresado":"17/11/2025"},{"negocio":"compra","fecha":"21/11/2025","producto":"Torillos 1 año","cantidad":103,"peso_kg":280.55,"peso_neto":null,"peso_bruto":280.55,"precio_bs_kg":28.5,"unidad":"Kg","lugar":null,"comprador":null,"vendedor":"Marcelo de Oliveira Vaca","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":249,"ingresado":"21/11/2025"},{"negocio":"compra","fecha":"15/11/2025","producto":"Terneros destete","cantidad":86,"peso_kg":127.0,"peso_neto":null,"peso_bruto":127.0,"precio_bs_kg":29.21,"unidad":null,"lugar":"Trinidad","comprador":null,"vendedor":"Carlos Czerniewicz ‎<Se editó este mensaje.>","notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Terneros","id":250,"ingresado":"15/11/2025"},{"negocio":"compra","fecha":"05/12/2025","producto":"Torillos","cantidad":165,"peso_kg":314.0,"peso_neto":314.0,"peso_bruto":null,"precio_bs_kg":26.14,"unidad":null,"lugar":"San Pedro","comprador":null,"vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Torillos","id":251,"ingresado":"05/12/2025"},{"negocio":"venta","fecha":"08/12/2025","producto":"Vacas descarte","cantidad":90,"peso_kg":433.0,"peso_neto":433.0,"peso_bruto":null,"precio_bs_kg":24.5,"unidad":null,"lugar":"San Lorenzo","comprador":null,"vendedor":null,"notas":null,"remitente":"Guido Hijo Nayar","categoria":"Vacas","id":252,"ingresado":"08/12/2025"},{"negocio":"compra","fecha":"13/12/2025","producto":"Torillos 2 año","cantidad":364,"peso_kg":311.7,"peso_neto":null,"peso_bruto":311.7,"precio_bs_kg":26.9,"unidad":"Kg","lugar":"San Martín, pesado en origen","comprador":null,"vendedor":"Johann Antelo Nacif","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":253,"ingresado":"13/12/2025"},{"negocio":"compra","fecha":"29/12/2025","producto":"Torillos","cantidad":202,"peso_kg":383.04,"peso_neto":null,"peso_bruto":383.04,"precio_bs_kg":26.5,"unidad":"Kg","lugar":"Los Angeles","comprador":null,"vendedor":"Johann Antelo Nacif","notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":254,"ingresado":"29/12/2025"},{"negocio":"venta","fecha":"15/01/2026","producto":"Torillos 2 año y medio","cantidad":175,"peso_kg":434.5,"peso_neto":434.5,"peso_bruto":null,"precio_bs_kg":26.5,"unidad":"Kg","lugar":"Abejas","comprador":"Fridosa Confinamiento","vendedor":null,"notas":null,"remitente":"Gerardo Aramayo","categoria":"Torillos","id":255,"ingresado":"15/01/2026"},{"negocio":"venta","fecha":"09/01/2026","producto":"Vacas","cantidad":16,"peso_kg":490.0,"peso_neto":490.0,"peso_bruto":null,"precio_bs_kg":20.0,"unidad":"Kg","lugar":"Sosiego","comprador":"Frigosi","vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Vacas","id":256,"ingresado":"09/01/2026"},{"negocio":"compra","fecha":"26/01/2026","producto":"Sorgo DP 715 Perla","cantidad":260,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":68.91,"unidad":"Kg","lugar":"San Jose","comprador":null,"vendedor":"Unión Centro Veterinario SRL","notas":null,"remitente":"Matías Honnen","categoria":"Sorgo","id":257,"ingresado":"26/01/2026"},{"negocio":"compra","fecha":"27/01/2026","producto":"Sorgo Perla","cantidad":200,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":80.04,"unidad":"Kg","lugar":"Santa Cruz","comprador":null,"vendedor":"Agripac SA","notas":null,"remitente":"Matías Honnen","categoria":"Sorgo","id":258,"ingresado":"27/01/2026"},{"negocio":"compra","fecha":"02/02/2026","producto":"Comedero Campeón de 250L","cantidad":25,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":560.0,"unidad":"Pieza","lugar":"Santa Cruz","comprador":null,"vendedor":"Plásticos Carmen SRL","notas":null,"remitente":"Matías Honnen","categoria":"Comedero Campeón de 250L","id":259,"ingresado":"02/02/2026"},{"negocio":"compra","fecha":"03/02/2026","producto":"Núcleo PM para producir pequinho","cantidad":3500,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":12.05,"unidad":"Kg","lugar":"Santa Cruz","comprador":null,"vendedor":"Totalpec SRL","notas":null,"remitente":"Matías Honnen","categoria":"Núcleo PM para producir pequin","id":260,"ingresado":"03/02/2026"},{"negocio":"compra","fecha":"03/02/2026","producto":"Núcleo E sin urea","cantidad":1350,"peso_kg":null,"peso_neto":null,"peso_bruto":null,"precio_bs_kg":6.86,"unidad":"Kg","lugar":"Santa Cruz","comprador":null,"vendedor":"Totalpec SRL","notas":null,"remitente":"Matías Honnen","categoria":"Núcleo E sin urea","id":261,"ingresado":"03/02/2026"},{"negocio":"venta","fecha":"09/02/2026","producto":"Vaquillas","cantidad":50,"peso_kg":407.93,"peso_neto":407.93,"peso_bruto":null,"precio_bs_kg":23.0,"unidad":null,"lugar":"Los Tojos","comprador":null,"vendedor":null,"notas":null,"remitente":"Sergio Gutiérrez Bowles","categoria":"Vaquillas","id":262,"ingresado":"09/02/2026"},{"negocio":"venta","fecha":"20/02/2026","producto":"Torillos","cantidad":500,"peso_kg":354.0,"peso_neto":354.0,"peso_bruto":null,"precio_bs_kg":26.0,"unidad":null,"lugar":"san Pedro","comprador":null,"vendedor":null,"notas":null,"remitente":"Jose P Simon","categoria":"Torillos","id":263,"ingresado":"20/02/2026"},{"negocio":"venta","fecha":"21/02/2026","producto":"Torillos","cantidad":150,"peso_kg":452.82,"peso_neto":452.82,"peso_bruto":476.65,"precio_bs_kg":26.0,"unidad":"Kg","lugar":"San Martin","comprador":"BFC SA","vendedor":null,"notas":null,"remitente":"Matías Honnen","categoria":"Torillos","id":264,"ingresado":"21/02/2026"}];
+updateHeaderStats();
+renderRecentEntries();
+updatePeriodCount();
+// Render all panels on load so data is visible immediately
+setTimeout(() => {
+  renderAnimales();
+  renderComparativo();
+  renderOtros();
+  renderTable();
+}, 50);
+</script>
+</body>
+</html>
